@@ -2,18 +2,20 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Build a macOS menu bar dictation app with a single-toggle recording flow, reliable device selection, Apple Speech transcription, auto-copy, and local history.
+**Goal:** Build a macOS menu bar dictation app with a single-toggle recording flow, reliable device selection, Apple Speech transcription, auto-copy, **no history**, and minimal Settings (login item + hotkey + crash reporting toggle).
 
-**Architecture:** SwiftUI Popover UI sends intents to an AppController/StateMachineRunner. The controller reduces intents to state + side effects and coordinates PermissionManager, AudioDeviceManager, AudioCaptureEngine, TranscriptionEngine, ClipboardManager, HistoryStore, and HUDManager.
+**Architecture:** SwiftUI Popover UI sends intents to an AppController/StateMachineRunner. The controller reduces intents to state + side effects and coordinates PermissionManager, AudioDeviceManager, AudioCaptureEngine, TranscriptionEngine, ClipboardManager, and HUDManager.
 
 **Tech Stack:** Swift, SwiftUI, AppKit (NSStatusBar/NSPopover), AVFoundation, Speech framework, XCTest.
+
+**Test command note:** Prefer `xcodebuild ... test -only-testing:SayItTests` for faster feedback; run full UI tests only when needed.
 
 ---
 
 ### Task 1: Create the Xcode project and base targets
 
 **Files:**
-- Create: `/Users/prince/Desktop/SayIt/SayIt.xcodeproj` (Xcode GUI)
+- Create: `/Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj` (Xcode GUI)
 - Create: `/Users/prince/Desktop/SayIt/SayIt/SayItApp.swift`
 - Create: `/Users/prince/Desktop/SayIt/SayIt/Info.plist`
 
@@ -26,7 +28,7 @@
 - Add `Application is agent (UIElement)` = YES (LSUIElement).
 
 **Step 3: Build to verify**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' build`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' build`
 Expected: BUILD SUCCEEDED
 
 **Step 4: Commit**
@@ -63,7 +65,7 @@ final class AppControllerTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (AppController not found)
 
 **Step 3: Write minimal implementation**
@@ -102,7 +104,7 @@ public enum AppError: Equatable {
 ```
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
@@ -113,15 +115,13 @@ git -C /Users/prince/Desktop/SayIt commit -m "feat: add app state and controller
 
 ---
 
-### Task 3: Wire menu bar app shell (status item + popover)
+### Task 3: Wire menu bar app shell (status item + popover + state icon)
 
 **Files:**
 - Create: `/Users/prince/Desktop/SayIt/SayIt/Menubar/MenuBarController.swift`
 - Modify: `/Users/prince/Desktop/SayIt/SayIt/SayItApp.swift`
 
 **Step 1: Write the failing test**
-- No UI test. Add a compile-only test to ensure MenuBarController initializes.
-
 ```swift
 import XCTest
 @testable import SayIt
@@ -134,15 +134,16 @@ final class MenuBarControllerTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (MenuBarController not found)
 
 **Step 3: Write minimal implementation**
 - MenuBarController creates NSStatusItem and NSPopover hosting SwiftUI view.
+- Update status item icon for Idle/Recording/Transcribing states (lightweight visual change).
 - SayItApp initializes MenuBarController once.
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
@@ -153,15 +154,12 @@ git -C /Users/prince/Desktop/SayIt commit -m "feat: add menu bar popover shell"
 
 ---
 
-### Task 4: Build Popover UI (state line + main button + mic + engine + recent 3)
+### Task 4: Build Popover UI (state line + main button + mic + engine)
 
 **Files:**
 - Create: `/Users/prince/Desktop/SayIt/SayIt/Menubar/PopoverView.swift`
-- Create: `/Users/prince/Desktop/SayIt/SayIt/Menubar/RecentListView.swift`
 
 **Step 1: Write the failing test**
-- Snapshot tests not required. Add a compile-only test to ensure view compiles.
-
 ```swift
 import XCTest
 import SwiftUI
@@ -175,15 +173,15 @@ final class PopoverViewTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (PopoverView not found)
 
 **Step 3: Write minimal implementation**
-- Render status line (left status, right explanation), main button, mic picker stub, engine picker stub, recent 3 stub.
+- Render status line (left status, right explanation), main button, mic picker stub, engine picker stub (Pro disabled).
 - Bind UI to AppController state via EnvironmentObject.
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
@@ -194,7 +192,7 @@ git -C /Users/prince/Desktop/SayIt commit -m "feat: add popover ui skeleton"
 
 ---
 
-### Task 5: PermissionManager and permission flow
+### Task 5: PermissionManager and permission flow (request once on first launch)
 
 **Files:**
 - Create: `/Users/prince/Desktop/SayIt/SayIt/Permissions/PermissionManager.swift`
@@ -215,16 +213,17 @@ final class PermissionManagerTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (PermissionManager not found)
 
 **Step 3: Write minimal implementation**
 - Define mic/speech permission statuses.
-- Add methods to request permissions and open system settings.
+- Add request-once flow (mic + speech) at first launch.
+- Add methods to open system settings.
 - AppController checks permissions before entering recording.
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
@@ -256,7 +255,7 @@ final class AudioDeviceManagerTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (AudioDeviceManager not found)
 
 **Step 3: Write minimal implementation**
@@ -265,7 +264,7 @@ Expected: FAIL (AudioDeviceManager not found)
 - Emit events for deviceSwitched/deviceUnavailable.
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
@@ -276,7 +275,7 @@ git -C /Users/prince/Desktop/SayIt commit -m "feat: add audio device manager"
 
 ---
 
-### Task 7: AudioCaptureEngine with finalize/cancel
+### Task 7: AudioCaptureEngine with finalize/cancel (no audio persistence)
 
 **Files:**
 - Create: `/Users/prince/Desktop/SayIt/SayIt/Audio/AudioCaptureEngine.swift`
@@ -298,15 +297,16 @@ final class AudioCaptureEngineTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (AudioCaptureEngine not found)
 
 **Step 3: Write minimal implementation**
-- Use AVAudioEngine/AVAudioFile to record selected input.
+- Use AVAudioEngine with in-memory buffer capture.
 - Implement start(), stopAndFinalize(), cancel().
+- Ensure temporary buffers are released after transcription.
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
@@ -334,23 +334,23 @@ import XCTest
 final class TranscriptionEngineTests: XCTestCase {
     func test_engine_interface() async throws {
         let engine: TranscriptionEngine = AppleSpeechEngine()
-        _ = try await engine.transcribe(url: URL(fileURLWithPath: "/tmp/empty.wav"), locale: Locale(identifier: "zh_CN"))
+        _ = try await engine.transcribe(buffer: .init(), locale: Locale(identifier: "zh_CN"))
     }
 }
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (TranscriptionEngine not found)
 
 **Step 3: Write minimal implementation**
-- Define protocol with async `transcribe(url:locale:)`.
+- Define protocol with async `transcribe(buffer:locale:)`.
 - AppleSpeechEngine uses Speech framework.
 - WhisperEngine is placeholder throwing notImplemented.
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
-Expected: PASS (or adjust test to skip if no file)
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Expected: PASS (or adjust test to skip if buffer invalid)
 
 **Step 5: Commit**
 ```bash
@@ -360,11 +360,10 @@ git -C /Users/prince/Desktop/SayIt commit -m "feat: add transcription engines"
 
 ---
 
-### Task 9: ClipboardManager + HistoryStore + HUDManager
+### Task 9: ClipboardManager + HUDManager
 
 **Files:**
 - Create: `/Users/prince/Desktop/SayIt/SayIt/Core/ClipboardManager.swift`
-- Create: `/Users/prince/Desktop/SayIt/SayIt/Core/HistoryStore.swift`
 - Create: `/Users/prince/Desktop/SayIt/SayIt/Core/HUDManager.swift`
 - Modify: `/Users/prince/Desktop/SayIt/SayIt/Core/AppController.swift`
 - Test: `/Users/prince/Desktop/SayIt/SayItTests/ClipboardManagerTests.swift`
@@ -383,22 +382,21 @@ final class ClipboardManagerTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (ClipboardManager not found)
 
 **Step 3: Write minimal implementation**
 - ClipboardManager writes to NSPasteboard.
-- HistoryStore persists to Application Support; caps by 7 days or N items.
-- HUDManager shows toast for Copied/device changes.
+- HUDManager shows toast for Copied/device changes/errors.
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
 ```bash
 git -C /Users/prince/Desktop/SayIt add -A
-git -C /Users/prince/Desktop/SayIt commit -m "feat: add clipboard, history, hud managers"
+git -C /Users/prince/Desktop/SayIt commit -m "feat: add clipboard and hud managers"
 ```
 
 ---
@@ -425,15 +423,15 @@ final class FlowTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (stop intent not wired)
 
 **Step 3: Write minimal implementation**
 - Add intents: stopAndTranscribe, cancel, retryTranscribe, selectMic, openSettings.
-- Implement reducer transitions and side effects sequencing.
+- Implement reducer transitions and side effects sequencing (copy first, HUD next).
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
@@ -444,12 +442,11 @@ git -C /Users/prince/Desktop/SayIt commit -m "feat: wire ui intents to controlle
 
 ---
 
-### Task 11: Settings + History view (View all)
+### Task 11: Settings (login item + hotkey + crash reporting + engine UI)
 
 **Files:**
 - Create: `/Users/prince/Desktop/SayIt/SayIt/Settings/SettingsView.swift`
-- Create: `/Users/prince/Desktop/SayIt/SayIt/History/HistoryView.swift`
-- Modify: `/Users/prince/Desktop/SayIt/SayIt/Settings/SettingsWindowController.swift`
+- Create: `/Users/prince/Desktop/SayIt/SayIt/Settings/SettingsWindowController.swift`
 
 **Step 1: Write the failing test**
 ```swift
@@ -464,21 +461,22 @@ final class SettingsViewTests: XCTestCase {
 ```
 
 **Step 2: Run test to verify it fails**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: FAIL (SettingsView not found)
 
 **Step 3: Write minimal implementation**
-- Settings shows engine selector, history retention values, and “View all”.
-- HistoryView lists entries with copy action.
+- Settings shows: Login Item toggle, Global Hotkey setting, Crash Reporting toggle.
+- Engine selector shown with Pro disabled.
+- SettingsWindowController opens non-intrusive settings window.
 
 **Step 4: Run test to verify it passes**
-Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
+Run: `xcodebuild -project /Users/prince/Desktop/SayIt/SayIt/SayIt.xcodeproj -scheme SayIt -destination 'platform=macOS' test`
 Expected: PASS
 
 **Step 5: Commit**
 ```bash
 git -C /Users/prince/Desktop/SayIt add -A
-git -C /Users/prince/Desktop/SayIt commit -m "feat: add settings and history views"
+git -C /Users/prince/Desktop/SayIt commit -m "feat: add settings"
 ```
 
 ---
@@ -492,7 +490,9 @@ git -C /Users/prince/Desktop/SayIt commit -m "feat: add settings and history vie
 - Start recording, stop and transcribe, clipboard auto-copies.
 - Device switch/fallback works while idle and recording.
 - Permission denied shows settings button.
-- Recent 3 entries copy on click.
+- Menu bar icon reflects Recording/Transcribing.
+- Global hotkey triggers start/stop.
+- Login item toggle works.
 
 **Step 2: Commit**
 ```bash
