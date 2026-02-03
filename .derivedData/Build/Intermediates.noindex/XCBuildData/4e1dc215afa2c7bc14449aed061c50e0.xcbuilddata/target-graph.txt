@@ -1,6 +1,0 @@
-Target dependency graph (3 targets)
-Target 'SayItUITests' in project 'SayIt'
-➜ Explicit dependency on target 'SayIt' in project 'SayIt'
-Target 'SayItTests' in project 'SayIt'
-➜ Explicit dependency on target 'SayIt' in project 'SayIt'
-Target 'SayIt' in project 'SayIt' (no dependencies)
