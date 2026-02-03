@@ -1,8 +1,8 @@
+import CoreAudio
 import SwiftUI
 
 struct PopoverView: View {
     @EnvironmentObject private var appController: AppController
-    @State private var selectedMic = "Default"
     @State private var selectedEngine = "System"
 
     private var statusTitle: String {
@@ -19,16 +19,18 @@ struct PopoverView: View {
     }
 
     private var statusDetail: String {
-        switch appController.state.mode {
-        case .idle:
-            return "Mic: \(selectedMic)"
-        case .recording:
-            return "Tap to stop"
-        case .transcribing:
-            return "Working…"
-        case .error:
-            return "Check permissions"
-        }
+        appController.state.statusDetail(selectedMic: appController.selectedMicName)
+    }
+
+    private var micSelection: Binding<AudioDeviceID?> {
+        Binding(
+            get: { appController.selectedMicID },
+            set: { newValue in
+                if let id = newValue {
+                    appController.send(.selectMic(id))
+                }
+            }
+        )
     }
 
     var body: some View {
@@ -52,10 +54,13 @@ struct PopoverView: View {
                 Text("Microphone")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Picker("Microphone", selection: $selectedMic) {
-                    Text("Default").tag("Default")
-                    Text("Built-in").tag("Built-in")
-                    Text("External").tag("External")
+                Picker("Microphone", selection: micSelection) {
+                    if appController.micDevices.isEmpty {
+                        Text("No input devices").tag(Optional<AudioDeviceID>.none)
+                    }
+                    ForEach(appController.micDevices) { device in
+                        Text(device.name).tag(Optional(device.id))
+                    }
                 }
                 .labelsHidden()
             }
@@ -92,7 +97,7 @@ struct PopoverView: View {
         case .idle, .error:
             appController.send(.startRecording)
         case .recording:
-            break
+            appController.send(.stopAndTranscribe)
         case .transcribing:
             break
         }

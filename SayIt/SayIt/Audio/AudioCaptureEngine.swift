@@ -1,10 +1,19 @@
 import AVFoundation
+import AudioToolbox
+import CoreAudio
 
-final class AudioCaptureEngine {
+protocol AudioCaptureEngineProtocol: AnyObject {
+    func start(deviceID: AudioDeviceID?) throws
+    func stopAndFinalize() throws -> AVAudioPCMBuffer
+    func cancel()
+}
+
+final class AudioCaptureEngine: AudioCaptureEngineProtocol {
     enum CaptureError: Error {
         case alreadyRunning
         case notRunning
         case unsupportedFormat
+        case unableToSetDevice
     }
 
     private let engine: AVAudioEngine
@@ -17,11 +26,29 @@ final class AudioCaptureEngine {
         self.engine = engine
     }
 
-    func start() throws {
+    func start(deviceID: AudioDeviceID?) throws {
         guard !isRunning else { throw CaptureError.alreadyRunning }
         buffers.removeAll()
 
         let inputNode = engine.inputNode
+        if let deviceID {
+            guard let audioUnit = inputNode.audioUnit else {
+                throw CaptureError.unableToSetDevice
+            }
+            var selectedID = deviceID
+            let size = UInt32(MemoryLayout<AudioDeviceID>.size)
+            let status = AudioUnitSetProperty(
+                audioUnit,
+                kAudioOutputUnitProperty_CurrentDevice,
+                kAudioUnitScope_Global,
+                0,
+                &selectedID,
+                size
+            )
+            guard status == noErr else {
+                throw CaptureError.unableToSetDevice
+            }
+        }
         let format = inputNode.inputFormat(forBus: 0)
         captureFormat = format
 
