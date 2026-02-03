@@ -23,7 +23,7 @@
 - Storage: no audio saved; no history in MVP.
 - Settings: login item + global hotkey included.
 - Menu bar icon: light status indication for Recording/Transcribing.
-- Feedback UX: connection shown in status row; recording time + transcribing text shown below button; copied uses HUD.
+- Feedback UX: recording time + transcribing text shown below button; copied uses HUD.
 - Global hotkey: Carbon RegisterEventHotKey for reliability; default ⌥Z; user can rebind.
 - Audio level: system-like dot indicator; only visible during recording; placed under recording duration.
 
