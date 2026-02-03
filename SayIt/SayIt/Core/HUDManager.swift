@@ -9,6 +9,7 @@ final class HUDManager {
     }
 
     func show(message: String) {
+        print("SayIt: HUD show '\(message)'. isMainThread=\(Thread.isMainThread)")
         panel?.orderOut(nil)
         let host = NSHostingController(rootView: HUDView(message: message))
         let panel = NSPanel(

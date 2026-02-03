@@ -65,6 +65,7 @@ final class AppController: ObservableObject {
                 state.phaseDetail = nil
                 return
             }
+            print("SayIt: startRecording requested. selectedMicID=\(String(describing: audioDeviceManager.selectedDeviceID)) name=\(selectedMicName)")
             do {
                 state.phaseDetail = .connecting
                 state.recordingStartedAt = nil
@@ -72,6 +73,7 @@ final class AppController: ObservableObject {
                 audioCaptureEngine.onFirstBuffer = { [weak self] in
                     guard let self else { return }
                     if self.state.mode == .recording {
+                        print("SayIt: first audio buffer received. recordingStartAt set.")
                         self.state.phaseDetail = .recording
                         self.state.recordingStartedAt = Date()
                     }
@@ -79,11 +81,13 @@ final class AppController: ObservableObject {
                 try audioCaptureEngine.start(deviceID: audioDeviceManager.selectedDeviceID)
                 state.mode = .recording
             } catch {
+                print("SayIt: audioCaptureEngine.start failed: \(error)")
                 state.mode = .error(.captureFailed)
                 state.phaseDetail = nil
             }
         case .stopAndTranscribe:
             guard case .recording = state.mode else { return }
+            print("SayIt: stopAndTranscribe requested.")
             state.mode = .transcribing(isSlow: false)
             state.phaseDetail = .transcribing
             state.transcribingStartedAt = Date()
@@ -94,7 +98,9 @@ final class AppController: ObservableObject {
                     let buffer: AVAudioPCMBuffer
                     do {
                         buffer = try self.audioCaptureEngine.stopAndFinalize()
+                        print("SayIt: audioCaptureEngine.stopAndFinalize succeeded. frames=\(buffer.frameLength)")
                     } catch {
+                        print("SayIt: audioCaptureEngine.stopAndFinalize failed: \(error)")
                         await MainActor.run {
                             self.state.mode = .error(.captureFailed)
                             self.state.phaseDetail = nil
@@ -107,6 +113,7 @@ final class AppController: ObservableObject {
                         locale: self.transcriptionLocale()
                     )
                     await MainActor.run {
+                        print("SayIt: transcription succeeded. textLength=\(text.count)")
                         _ = self.clipboardManager.write(text)
                         self.hudManager.showCopied()
                         self.state.mode = .idle
@@ -114,6 +121,7 @@ final class AppController: ObservableObject {
                         self.state.transcribingStartedAt = nil
                     }
                 } catch {
+                    print("SayIt: transcription failed: \(error)")
                     await MainActor.run {
                         self.state.mode = .error(.transcriptionFailed)
                         self.state.phaseDetail = nil

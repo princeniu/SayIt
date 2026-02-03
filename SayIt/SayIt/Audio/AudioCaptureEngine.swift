@@ -35,6 +35,7 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
         didEmitFirstBuffer = false
 
         let inputNode = engine.inputNode
+        print("SayIt: AudioCaptureEngine.start called. deviceID=\(String(describing: deviceID))")
         if let deviceID {
             guard let audioUnit = inputNode.audioUnit else {
                 throw CaptureError.unableToSetDevice
@@ -50,11 +51,13 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
                 size
             )
             guard status == noErr else {
+                print("SayIt: AudioUnitSetProperty failed with status=\(status)")
                 throw CaptureError.unableToSetDevice
             }
         }
         let format = inputNode.inputFormat(forBus: 0)
         captureFormat = format
+        print("SayIt: capture format: rate=\(format.sampleRate) channels=\(format.channelCount)")
 
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
             self?.append(buffer)
@@ -63,6 +66,7 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
         engine.prepare()
         try engine.start()
         isRunning = true
+        print("SayIt: AudioCaptureEngine started.")
     }
 
     func stopAndFinalize() throws -> AVAudioPCMBuffer {
@@ -74,6 +78,7 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
         engine.stop()
 
         guard let format = captureFormat else { throw CaptureError.notRunning }
+        print("SayIt: stopAndFinalize. buffers=\(buffers.count)")
         return try combine(buffers: buffers, format: format)
     }
 
@@ -92,6 +97,7 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
         if !didEmitFirstBuffer {
             didEmitFirstBuffer = true
             let handler = onFirstBuffer
+            print("SayIt: first buffer callback. frameLength=\(buffer.frameLength)")
             DispatchQueue.main.async {
                 handler?()
             }
