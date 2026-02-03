@@ -1,13 +1,11 @@
-import XCTest
+import Testing
 @testable import SayIt
 
-final class AppControllerTests: XCTestCase {
-    func test_startRecording_fromIdle_setsRecordingState() {
-        let controller = AppController()
-        XCTAssertEqual(controller.state.mode, .idle)
+@Test func startRecording_fromIdle_setsRecordingState() async throws {
+    let controller = AppController()
+    #expect(controller.state.mode == .idle)
 
-        controller.send(.startRecording)
+    controller.send(.startRecording)
 
-        XCTAssertEqual(controller.state.mode, .recording)
-    }
+    #expect(controller.state.mode == .recording)
 }
