@@ -72,9 +72,13 @@ struct PopoverView: View {
 
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 if let text = secondaryStatusText(at: context.date) {
-                    Text(text)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack {
+                        Spacer()
+                        Text(text)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                    }
                 }
             }
 

@@ -2,11 +2,14 @@ import AppKit
 import SwiftUI
 
 final class HUDManager {
+    private var panel: NSPanel?
+
     func showCopied() {
         show(message: "Copied ✓")
     }
 
     func show(message: String) {
+        panel?.orderOut(nil)
         let host = NSHostingController(rootView: HUDView(message: message))
         let panel = NSPanel(
             contentRect: NSRect(x: 0, y: 0, width: 140, height: 48),
@@ -22,6 +25,7 @@ final class HUDManager {
         panel.ignoresMouseEvents = true
         panel.collectionBehavior = [.canJoinAllSpaces, .transient]
         panel.contentView = host.view
+        self.panel = panel
 
         if let screen = NSScreen.main {
             let frame = screen.visibleFrame
@@ -35,6 +39,9 @@ final class HUDManager {
         panel.orderFrontRegardless()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             panel.orderOut(nil)
+            if self.panel === panel {
+                self.panel = nil
+            }
         }
     }
 }
