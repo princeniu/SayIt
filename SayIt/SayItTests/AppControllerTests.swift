@@ -8,7 +8,8 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard
+        userDefaults: suite ?? .standard,
+        useSystemStatus: false
     )
     let controller = AppController(permissionManager: permissionManager)
     #expect(controller.state.mode == AppMode.idle)

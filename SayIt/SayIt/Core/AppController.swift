@@ -7,15 +7,18 @@ final class AppController: ObservableObject {
     private let permissionManager: PermissionManager
     private let audioDeviceManager: AudioDeviceManager
     private let audioCaptureEngine: AudioCaptureEngine
+    private let transcriptionEngine: TranscriptionEngine
 
     init(
         permissionManager: PermissionManager = PermissionManager(),
         audioDeviceManager: AudioDeviceManager = AudioDeviceManager(),
-        audioCaptureEngine: AudioCaptureEngine = AudioCaptureEngine()
+        audioCaptureEngine: AudioCaptureEngine = AudioCaptureEngine(),
+        transcriptionEngine: TranscriptionEngine = AppleSpeechEngine()
     ) {
         self.permissionManager = permissionManager
         self.audioDeviceManager = audioDeviceManager
         self.audioCaptureEngine = audioCaptureEngine
+        self.transcriptionEngine = transcriptionEngine
         self.permissionManager.requestPermissionsIfNeeded()
     }
 
