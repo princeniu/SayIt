@@ -35,6 +35,7 @@ struct PopoverView: View {
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
+        if clamped < 0.016 { return 0 }
         let boosted = pow(clamped, 0.25)
         let scaled = (boosted * Double(maxBars)).rounded()
         return min(maxBars, max(0, Int(scaled)))
@@ -214,7 +215,7 @@ private struct LevelMeterView: View {
         .animation(.easeOut(duration: 0.12), value: activeBars)
 #if DEBUG
         .overlay(alignment: .topTrailing) {
-            Text(String(format: "%.2f", level))
+            Text(String(format: "%.4f", level))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .offset(x: 8, y: -10)

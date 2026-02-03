@@ -35,6 +35,7 @@ import Testing
 @Test func popoverView_levelBarCount_clampsAndScales() async throws {
     #expect(PopoverView.levelBarCount(level: -0.2, maxBars: 12) == 0)
     #expect(PopoverView.levelBarCount(level: 0, maxBars: 12) == 0)
+    #expect(PopoverView.levelBarCount(level: 0.015, maxBars: 12) == 0)
     #expect(PopoverView.levelBarCount(level: 0.02, maxBars: 12) == 5)
     #expect(PopoverView.levelBarCount(level: 0.35, maxBars: 12) == 9)
     #expect(PopoverView.levelBarCount(level: 1.0, maxBars: 12) == 12)
