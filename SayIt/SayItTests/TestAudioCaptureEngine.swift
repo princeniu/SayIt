@@ -9,6 +9,7 @@ final class TestAudioCaptureEngine: AudioCaptureEngineProtocol {
     private(set) var lastStartDeviceID: AudioDeviceID?
     var bufferToReturn: AVAudioPCMBuffer?
     var onFirstBuffer: (() -> Void)?
+    var onLevelUpdate: ((Double) -> Void)?
     private(set) var firstBufferSimulated = false
 
     func start(deviceID: AudioDeviceID?) throws {
@@ -40,5 +41,9 @@ final class TestAudioCaptureEngine: AudioCaptureEngineProtocol {
         guard !firstBufferSimulated else { return }
         firstBufferSimulated = true
         onFirstBuffer?()
+    }
+
+    func simulateLevel(_ level: Double) {
+        onLevelUpdate?(level)
     }
 }

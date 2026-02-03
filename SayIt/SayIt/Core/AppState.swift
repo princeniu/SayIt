@@ -19,6 +19,7 @@ public struct AppState: Equatable {
     public var phaseDetail: PhaseDetail? = nil
     public var recordingStartedAt: Date? = nil
     public var transcribingStartedAt: Date? = nil
+    public var audioLevel: Double = 0
 
     func statusDetail(selectedMic: String) -> String {
         switch mode {

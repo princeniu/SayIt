@@ -25,6 +25,20 @@ struct PopoverView: View {
         return String(format: "%02d:%02d", minutes, remainingSeconds)
     }
 
+    static func shouldShowLevel(for mode: AppMode) -> Bool {
+        if case .recording = mode {
+            return true
+        }
+        return false
+    }
+
+    static func levelBarCount(level: Double, maxBars: Int) -> Int {
+        guard maxBars > 0 else { return 0 }
+        let clamped = min(1, max(0, level))
+        let scaled = (clamped * Double(maxBars)).rounded()
+        return min(maxBars, max(0, Int(scaled)))
+    }
+
     private var statusTitle: String {
         switch appController.state.mode {
         case .idle:
@@ -70,15 +84,21 @@ struct PopoverView: View {
             }
             .buttonStyle(.borderedProminent)
 
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                if let text = secondaryStatusText(at: context.date) {
-                    HStack {
-                        Spacer()
-                        Text(text)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        Spacer()
+            VStack(spacing: 6) {
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    if let text = secondaryStatusText(at: context.date) {
+                        HStack {
+                            Spacer()
+                            Text(text)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
                     }
+                }
+
+                if Self.shouldShowLevel(for: appController.state.mode) {
+                    LevelMeterView(level: appController.state.audioLevel)
                 }
             }
 
@@ -173,6 +193,24 @@ struct PopoverView: View {
         case .transcribing:
             break
         }
+    }
+}
+
+private struct LevelMeterView: View {
+    let level: Double
+    private let maxBars = 12
+
+    var body: some View {
+        let activeBars = PopoverView.levelBarCount(level: level, maxBars: maxBars)
+        HStack(spacing: 4) {
+            ForEach(0..<maxBars, id: \.self) { index in
+                RoundedRectangle(cornerRadius: 2)
+                    .frame(width: 6, height: 6)
+                    .foregroundStyle(index < activeBars ? .primary : .secondary)
+                    .opacity(index < activeBars ? 0.9 : 0.3)
+            }
+        }
+        .animation(.easeOut(duration: 0.12), value: activeBars)
     }
 }
 

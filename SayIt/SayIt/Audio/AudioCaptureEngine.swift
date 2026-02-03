@@ -7,6 +7,7 @@ protocol AudioCaptureEngineProtocol: AnyObject {
     func stopAndFinalize() throws -> AVAudioPCMBuffer
     func cancel()
     var onFirstBuffer: (() -> Void)? { get set }
+    var onLevelUpdate: ((Double) -> Void)? { get set }
 }
 
 final class AudioCaptureEngine: AudioCaptureEngineProtocol {
@@ -23,6 +24,7 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
     private var isRunning = false
     private let bufferLock = NSLock()
     var onFirstBuffer: (() -> Void)?
+    var onLevelUpdate: ((Double) -> Void)?
     private var didEmitFirstBuffer = false
 
     init(engine: AVAudioEngine = AVAudioEngine()) {
@@ -102,10 +104,53 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
                 handler?()
             }
         }
+        if let level = calculateLevel(buffer: buffer) {
+            let handler = onLevelUpdate
+            DispatchQueue.main.async {
+                handler?(level)
+            }
+        }
         guard let copy = copyBuffer(buffer) else { return }
         bufferLock.lock()
         buffers.append(copy)
         bufferLock.unlock()
+    }
+
+    private func calculateLevel(buffer: AVAudioPCMBuffer) -> Double? {
+        let frameLength = Int(buffer.frameLength)
+        guard frameLength > 0 else { return nil }
+
+        switch buffer.format.commonFormat {
+        case .pcmFormatFloat32:
+            guard let channelData = buffer.floatChannelData else { return nil }
+            let channelCount = Int(buffer.format.channelCount)
+            var sumSquares: Double = 0
+            for channel in 0..<channelCount {
+                let samples = channelData[channel]
+                for i in 0..<frameLength {
+                    let value = Double(samples[i])
+                    sumSquares += value * value
+                }
+            }
+            let meanSquares = sumSquares / Double(frameLength * channelCount)
+            return min(max(sqrt(meanSquares), 0), 1)
+        case .pcmFormatInt16:
+            guard let channelData = buffer.int16ChannelData else { return nil }
+            let channelCount = Int(buffer.format.channelCount)
+            var sumSquares: Double = 0
+            let denom = Double(Int16.max)
+            for channel in 0..<channelCount {
+                let samples = channelData[channel]
+                for i in 0..<frameLength {
+                    let normalized = Double(samples[i]) / denom
+                    sumSquares += normalized * normalized
+                }
+            }
+            let meanSquares = sumSquares / Double(frameLength * channelCount)
+            return min(max(sqrt(meanSquares), 0), 1)
+        default:
+            return nil
+        }
     }
 
     private func copyBuffer(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {

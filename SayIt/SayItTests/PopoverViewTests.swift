@@ -24,3 +24,18 @@ import Testing
     #expect(PopoverView.formatDuration(5) == "00:05")
     #expect(PopoverView.formatDuration(65) == "01:05")
 }
+
+@Test func popoverView_shouldShowLevel_onlyWhenRecording() async throws {
+    #expect(PopoverView.shouldShowLevel(for: .recording))
+    #expect(!PopoverView.shouldShowLevel(for: .idle))
+    #expect(!PopoverView.shouldShowLevel(for: .transcribing(isSlow: false)))
+    #expect(!PopoverView.shouldShowLevel(for: .error(.captureFailed)))
+}
+
+@Test func popoverView_levelBarCount_clampsAndScales() async throws {
+    #expect(PopoverView.levelBarCount(level: -0.2, maxBars: 10) == 0)
+    #expect(PopoverView.levelBarCount(level: 0, maxBars: 10) == 0)
+    #expect(PopoverView.levelBarCount(level: 0.35, maxBars: 10) == 4)
+    #expect(PopoverView.levelBarCount(level: 1.0, maxBars: 10) == 10)
+    #expect(PopoverView.levelBarCount(level: 1.4, maxBars: 10) == 10)
+}

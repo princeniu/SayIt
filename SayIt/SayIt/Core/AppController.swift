@@ -16,6 +16,7 @@ final class AppController: ObservableObject {
     private let clipboardManager: ClipboardManager
     private let hudManager: HUDManager
     private let settingsWindowController: SettingsWindowControlling
+    private let hotkeyManager: HotkeyManaging
     private let settingsUserDefaults: UserDefaults
     private var cancellables: Set<AnyCancellable> = []
     private let languageKey = "transcriptionLanguage"
@@ -28,6 +29,7 @@ final class AppController: ObservableObject {
         clipboardManager: ClipboardManager = ClipboardManager(),
         hudManager: HUDManager = HUDManager(),
         settingsWindowController: SettingsWindowControlling = SettingsWindowController(),
+        hotkeyManager: HotkeyManaging = HotkeyManager(),
         settingsUserDefaults: UserDefaults = .standard,
         autoRequestPermissions: Bool = true
     ) {
@@ -38,6 +40,7 @@ final class AppController: ObservableObject {
         self.clipboardManager = clipboardManager
         self.hudManager = hudManager
         self.settingsWindowController = settingsWindowController
+        self.hotkeyManager = hotkeyManager
         self.settingsUserDefaults = settingsUserDefaults
         self.micDevices = audioDeviceManager.devices
         self.selectedMicID = audioDeviceManager.selectedDeviceID
@@ -56,6 +59,21 @@ final class AppController: ObservableObject {
         if autoRequestPermissions {
             self.permissionManager.requestPermissionsIfNeeded()
         }
+        do {
+            try hotkeyManager.register { [weak self] in
+                guard let self else { return }
+                switch self.state.mode {
+                case .idle:
+                    self.send(.startRecording)
+                case .recording:
+                    self.send(.stopAndTranscribe)
+                default:
+                    break
+                }
+            }
+        } catch {
+            // TODO: surface hotkey registration failure
+        }
     }
 
     func send(_ intent: AppIntent) {
@@ -71,12 +89,19 @@ final class AppController: ObservableObject {
                 state.phaseDetail = .connecting
                 state.recordingStartedAt = nil
                 state.transcribingStartedAt = nil
+                state.audioLevel = 0
                 audioCaptureEngine.onFirstBuffer = { [weak self] in
                     guard let self else { return }
                     if self.state.mode == .recording {
                         print("SayIt: first audio buffer received. recordingStartAt set.")
                         self.state.phaseDetail = .recording
                         self.state.recordingStartedAt = Date()
+                    }
+                }
+                audioCaptureEngine.onLevelUpdate = { [weak self] level in
+                    guard let self else { return }
+                    if self.state.mode == .recording {
+                        self.state.audioLevel = level
                     }
                 }
                 try audioCaptureEngine.start(deviceID: audioDeviceManager.selectedDeviceID)
@@ -93,6 +118,7 @@ final class AppController: ObservableObject {
             state.phaseDetail = .transcribing
             state.transcribingStartedAt = Date()
             state.recordingStartedAt = nil
+            state.audioLevel = 0
             Task { [weak self] in
                 guard let self else { return }
                 do {
@@ -106,6 +132,7 @@ final class AppController: ObservableObject {
                             self.state.mode = .error(.captureFailed)
                             self.state.phaseDetail = nil
                             self.state.transcribingStartedAt = nil
+                            self.state.audioLevel = 0
                         }
                         return
                     }
@@ -120,6 +147,7 @@ final class AppController: ObservableObject {
                         self.state.mode = .idle
                         self.state.phaseDetail = nil
                         self.state.transcribingStartedAt = nil
+                        self.state.audioLevel = 0
                     }
                 } catch {
                     print("SayIt: transcription failed: \(error)")
@@ -127,6 +155,7 @@ final class AppController: ObservableObject {
                         self.state.mode = .error(.transcriptionFailed)
                         self.state.phaseDetail = nil
                         self.state.transcribingStartedAt = nil
+                        self.state.audioLevel = 0
                     }
                 }
             }
@@ -136,6 +165,7 @@ final class AppController: ObservableObject {
             state.phaseDetail = nil
             state.recordingStartedAt = nil
             state.transcribingStartedAt = nil
+            state.audioLevel = 0
         case .retryTranscribe:
             break
         case .selectMic(let id):

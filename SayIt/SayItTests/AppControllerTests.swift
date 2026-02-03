@@ -208,10 +208,79 @@ import Testing
     #expect(settingsWindow.showCalled == true)
 }
 
+@Test func hotkeyToggle_fromIdle_startsRecording() async throws {
+    let suite = UserDefaults(suiteName: "AppControllerTests")
+    suite?.removePersistentDomain(forName: "AppControllerTests")
+    let audioCaptureEngine = TestAudioCaptureEngine()
+    let hotkeyManager = TestHotkeyManager()
+    let permissionManager = PermissionManager(
+        micStatus: .authorized,
+        speechStatus: .authorized,
+        userDefaults: suite ?? .standard,
+        useSystemStatus: false
+    )
+    let controller = AppController(
+        permissionManager: permissionManager,
+        audioDeviceManager: AudioDeviceManager(startMonitoring: false),
+        audioCaptureEngine: audioCaptureEngine,
+        transcriptionEngine: TestTranscriptionEngine(),
+        hotkeyManager: hotkeyManager,
+        autoRequestPermissions: false
+    )
+
+    hotkeyManager.simulateToggle()
+
+    #expect(audioCaptureEngine.startCalled == true)
+    #expect(controller.state.mode == AppMode.recording)
+}
+
+@Test func audioLevel_updatesDuringRecording() async throws {
+    let suite = UserDefaults(suiteName: "AppControllerTests")
+    suite?.removePersistentDomain(forName: "AppControllerTests")
+    let audioCaptureEngine = TestAudioCaptureEngine()
+    let permissionManager = PermissionManager(
+        micStatus: .authorized,
+        speechStatus: .authorized,
+        userDefaults: suite ?? .standard,
+        useSystemStatus: false
+    )
+    let controller = AppController(
+        permissionManager: permissionManager,
+        audioDeviceManager: AudioDeviceManager(startMonitoring: false),
+        audioCaptureEngine: audioCaptureEngine,
+        transcriptionEngine: TestTranscriptionEngine(),
+        autoRequestPermissions: false
+    )
+
+    controller.send(.startRecording)
+    audioCaptureEngine.simulateLevel(0.42)
+
+    #expect(controller.state.audioLevel == 0.42)
+}
+
 final class TestSettingsWindowController: SettingsWindowControlling {
     private(set) var showCalled = false
 
     func show() {
         showCalled = true
+    }
+}
+
+final class TestHotkeyManager: HotkeyManaging {
+    private(set) var registerCalled = false
+    private(set) var unregisterCalled = false
+    private var handler: (() -> Void)?
+
+    func register(toggleHandler: @escaping () -> Void) throws {
+        registerCalled = true
+        handler = toggleHandler
+    }
+
+    func unregister() {
+        unregisterCalled = true
+    }
+
+    func simulateToggle() {
+        handler?()
     }
 }
