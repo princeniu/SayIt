@@ -403,7 +403,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-						INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayIt needs access to your microphone to record audio.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SayIt uses speech recognition to transcribe your recordings.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -436,7 +438,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-						INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayIt needs access to your microphone to record audio.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SayIt uses speech recognition to transcribe your recordings.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -463,7 +467,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V7Z2QYFJWN;
 				GENERATE_INFOPLIST_FILE = YES;
-						INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayIt needs access to your microphone to record audio.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SayIt uses speech recognition to transcribe your recordings.";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.niu.SayItTests;
@@ -485,7 +491,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V7Z2QYFJWN;
 				GENERATE_INFOPLIST_FILE = YES;
-						INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayIt needs access to your microphone to record audio.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SayIt uses speech recognition to transcribe your recordings.";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.niu.SayItTests;
@@ -506,7 +514,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V7Z2QYFJWN;
 				GENERATE_INFOPLIST_FILE = YES;
-						INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayIt needs access to your microphone to record audio.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SayIt uses speech recognition to transcribe your recordings.";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.niu.SayItUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -526,7 +536,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V7Z2QYFJWN;
 				GENERATE_INFOPLIST_FILE = YES;
-						INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayIt needs access to your microphone to record audio.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SayIt uses speech recognition to transcribe your recordings.";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.niu.SayItUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

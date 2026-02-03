@@ -1,15 +1,24 @@
 import Combine
 import Foundation
 
-public final class AppController: ObservableObject {
-    @Published public private(set) var state = AppState()
+final class AppController: ObservableObject {
+    @Published private(set) var state = AppState()
 
-    public init() {}
+    private let permissionManager: PermissionManager
 
-    public func send(_ intent: AppIntent) {
+    init(permissionManager: PermissionManager = PermissionManager()) {
+        self.permissionManager = permissionManager
+        self.permissionManager.requestPermissionsIfNeeded()
+    }
+
+    func send(_ intent: AppIntent) {
         switch intent {
         case .startRecording:
-            state.mode = .recording
+            if permissionManager.isAuthorized {
+                state.mode = .recording
+            } else {
+                state.mode = .error(.permissionDenied)
+            }
         }
     }
 }
