@@ -146,6 +146,10 @@ final class AppController: ObservableObject {
         }
     }
 
+    func setHUDAnchorWindow(_ window: NSWindow?) {
+        hudManager.anchorWindow = window
+    }
+
     var selectedMicName: String {
         guard let selected = selectedMicID else { return "None" }
         return micDevices.first(where: { $0.id == selected })?.name ?? "Unknown"

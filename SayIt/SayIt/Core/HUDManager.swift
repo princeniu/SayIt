@@ -3,6 +3,7 @@ import SwiftUI
 
 final class HUDManager {
     private var panel: NSPanel?
+    weak var anchorWindow: NSWindow?
 
     func showCopied() {
         show(message: "Copied ✓")
@@ -28,17 +29,28 @@ final class HUDManager {
         panel.contentView = host.view
         self.panel = panel
 
-        if let screen = NSScreen.main {
+        if let anchorWindow = anchorWindow {
+            let frame = anchorWindow.frame
+            let origin = NSPoint(
+                x: frame.midX - panel.frame.width / 2,
+                y: frame.maxY - panel.frame.height - 12
+            )
+            panel.setFrameOrigin(origin)
+            anchorWindow.addChildWindow(panel, ordered: .above)
+            panel.orderFront(nil)
+        } else if let screen = NSScreen.main ?? NSScreen.screens.first {
             let frame = screen.visibleFrame
             let origin = NSPoint(
                 x: frame.midX - panel.frame.width / 2,
                 y: frame.maxY - panel.frame.height - 24
             )
             panel.setFrameOrigin(origin)
+            panel.orderFrontRegardless()
         }
-
-        panel.orderFrontRegardless()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            if let anchorWindow = self.anchorWindow {
+                anchorWindow.removeChildWindow(panel)
+            }
             panel.orderOut(nil)
             if self.panel === panel {
                 self.panel = nil

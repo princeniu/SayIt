@@ -67,6 +67,11 @@ final class MenuBarController {
             popover.performClose(sender)
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                let window = self.popover.contentViewController?.view.window
+                self.appController.setHUDAnchorWindow(window)
+            }
         }
     }
 }
