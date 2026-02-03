@@ -9,10 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("SayIt")
+        PopoverView()
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(AppController())
 }
