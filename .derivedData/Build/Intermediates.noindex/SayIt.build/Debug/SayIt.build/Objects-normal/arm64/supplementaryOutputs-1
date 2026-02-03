@@ -1,0 +1,23 @@
+{
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Audio/AudioCaptureEngine.swift" : {
+    "const-values" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioCaptureEngine.swiftconstvalues",
+    "dependencies" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioCaptureEngine.d",
+    "diagnostics" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioCaptureEngine.dia",
+    "object" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioCaptureEngine.o",
+    "swift-dependencies" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioCaptureEngine.swiftdeps"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Audio/AudioDeviceManager.swift" : {
+    "const-values" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioDeviceManager.swiftconstvalues",
+    "dependencies" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioDeviceManager.d",
+    "diagnostics" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioDeviceManager.dia",
+    "object" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioDeviceManager.o",
+    "swift-dependencies" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AudioDeviceManager.swiftdeps"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/AppController.swift" : {
+    "const-values" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AppController.swiftconstvalues",
+    "dependencies" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AppController.d",
+    "diagnostics" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AppController.dia",
+    "object" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AppController.o",
+    "swift-dependencies" : "/Users/prince/Desktop/SayIt/.derivedData/Build/Intermediates.noindex/SayIt.build/Debug/SayIt.build/Objects-normal/arm64/AppController.swiftdeps"
+  }
+}

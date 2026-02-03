@@ -35,7 +35,7 @@ struct PopoverView: View {
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
-        let boosted = sqrt(clamped)
+        let boosted = pow(clamped, 0.25)
         let scaled = (boosted * Double(maxBars)).rounded()
         return min(maxBars, max(0, Int(scaled)))
     }
