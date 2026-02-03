@@ -6,7 +6,10 @@ import Testing
     let suite = UserDefaults(suiteName: "PermissionManagerTests")
     suite?.removePersistentDomain(forName: "PermissionManagerTests")
 
-    let manager = PermissionManager(userDefaults: suite ?? .standard)
+    let manager = PermissionManager(
+        userDefaults: suite ?? .standard,
+        useSystemStatus: false
+    )
     #expect(manager.micStatus == PermissionManager.Status.unknown)
     #expect(manager.speechStatus == PermissionManager.Status.unknown)
 }

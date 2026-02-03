@@ -5,9 +5,14 @@ final class AppController: ObservableObject {
     @Published private(set) var state = AppState()
 
     private let permissionManager: PermissionManager
+    private let audioDeviceManager: AudioDeviceManager
 
-    init(permissionManager: PermissionManager = PermissionManager()) {
+    init(
+        permissionManager: PermissionManager = PermissionManager(),
+        audioDeviceManager: AudioDeviceManager = AudioDeviceManager()
+    ) {
         self.permissionManager = permissionManager
+        self.audioDeviceManager = audioDeviceManager
         self.permissionManager.requestPermissionsIfNeeded()
     }
 

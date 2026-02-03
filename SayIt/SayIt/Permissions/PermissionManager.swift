@@ -19,11 +19,14 @@ final class PermissionManager: ObservableObject {
     init(
         micStatus: Status = .unknown,
         speechStatus: Status = .unknown,
-        userDefaults: UserDefaults = .standard
+        userDefaults: UserDefaults = .standard,
+        useSystemStatus: Bool = true
     ) {
         self.userDefaults = userDefaults
         self.micStatus = micStatus
         self.speechStatus = speechStatus
+
+        guard useSystemStatus else { return }
 
         if micStatus == .unknown {
             self.micStatus = Self.mapMicStatus(AVCaptureDevice.authorizationStatus(for: .audio))
