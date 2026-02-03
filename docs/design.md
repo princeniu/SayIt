@@ -24,6 +24,8 @@
 - Settings: login item + global hotkey included.
 - Menu bar icon: light status indication for Recording/Transcribing.
 - Feedback UX: connection shown in status row; recording time + transcribing text shown below button; copied uses HUD.
+- Global hotkey: Carbon RegisterEventHotKey for reliability; default ⌥Z; user can rebind.
+- Audio level: system-like dot indicator; only visible during recording; placed under recording duration.
 
 ## Architecture
 ### High-Level Modules
@@ -64,16 +66,16 @@
 - **Microphone Selector**: dropdown showing current selection; device change handled dynamically
 - **Engine Selector**: System (recommended) / High Accuracy (Offline) [Pro disabled]
 - **Permissions Denied**: clear message + Open System Settings
+- **Audio Level Indicator**: system-like dot bar; visible only during recording; placed under recording duration
 
 ## User Feedback (Smooth & Consistent)
-- **Connecting**: after Start, show “Connecting…” in status row until capture actually begins.
 - **Recording Duration**: show `MM:SS` below the primary button, updating every second.
 - **Transcribing**: show “Transcribing…” below the primary button; after 5s show “Still working…”.
 - **Copied**: show HUD/Toast “Copied ✓” (no focus steal), then return to Idle.
 
 ## Settings
 - Login item (auto start)
-- Global hotkey (editable)
+- Global hotkey (editable, default ⌥Z)
 - Crash reporting toggle
 
 ## Non-goals (MVP)
