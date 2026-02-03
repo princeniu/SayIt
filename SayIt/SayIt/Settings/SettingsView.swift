@@ -15,13 +15,8 @@ struct SettingsView: View {
                     .foregroundColor(.secondary)
             }
             Toggle("Crash reporting", isOn: $crashReportingEnabled)
-            Picker("Recognition engine", selection: .constant("system")) {
-                Text("System (Recommended)").tag("system")
-                Text("High Accuracy (Offline) — Pro").tag("pro")
-            }
-            .disabled(true)
         }
-        .frame(width: 360, height: 220)
+        .frame(width: 360, height: 180)
         .padding()
     }
 }

@@ -8,6 +8,8 @@ final class TestAudioCaptureEngine: AudioCaptureEngineProtocol {
     private(set) var cancelCalled = false
     private(set) var lastStartDeviceID: AudioDeviceID?
     var bufferToReturn: AVAudioPCMBuffer?
+    var onFirstBuffer: (() -> Void)?
+    private(set) var firstBufferSimulated = false
 
     func start(deviceID: AudioDeviceID?) throws {
         startCalled = true
@@ -32,5 +34,11 @@ final class TestAudioCaptureEngine: AudioCaptureEngineProtocol {
 
     func cancel() {
         cancelCalled = true
+    }
+
+    func simulateFirstBuffer() {
+        guard !firstBufferSimulated else { return }
+        firstBufferSimulated = true
+        onFirstBuffer?()
     }
 }

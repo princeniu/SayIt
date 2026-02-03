@@ -3,6 +3,7 @@ import AVFoundation
 
 final class TestTranscriptionEngine: TranscriptionEngine {
     private(set) var transcribeCalled = false
+    private(set) var lastLocaleIdentifier: String?
     var result: String
 
     init(result: String = "") {
@@ -11,6 +12,7 @@ final class TestTranscriptionEngine: TranscriptionEngine {
 
     func transcribe(buffer: AVAudioPCMBuffer, locale: Locale) async throws -> String {
         transcribeCalled = true
+        lastLocaleIdentifier = locale.identifier
         return result
     }
 }

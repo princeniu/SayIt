@@ -23,6 +23,7 @@
 - Storage: no audio saved; no history in MVP.
 - Settings: login item + global hotkey included.
 - Menu bar icon: light status indication for Recording/Transcribing.
+- Feedback UX: connection shown in status row; recording time + transcribing text shown below button; copied uses HUD.
 
 ## Architecture
 ### High-Level Modules
@@ -64,6 +65,12 @@
 - **Engine Selector**: System (recommended) / High Accuracy (Offline) [Pro disabled]
 - **Permissions Denied**: clear message + Open System Settings
 
+## User Feedback (Smooth & Consistent)
+- **Connecting**: after Start, show “Connecting…” in status row until capture actually begins.
+- **Recording Duration**: show `MM:SS` below the primary button, updating every second.
+- **Transcribing**: show “Transcribing…” below the primary button; after 5s show “Still working…”.
+- **Copied**: show HUD/Toast “Copied ✓” (no focus steal), then return to Idle.
+
 ## Settings
 - Login item (auto start)
 - Global hotkey (editable)
@@ -80,4 +87,3 @@
 - **Device disconnect during recording**: stop capture, show error, allow restart.
 - **Speech permission denial**: explicit UI state + settings link.
 - **Transcription latency**: `isSlow` UI hint; no premature error.
-

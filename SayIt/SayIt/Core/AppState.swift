@@ -7,17 +7,27 @@ public enum AppMode: Equatable {
     case error(AppError)
 }
 
+public enum PhaseDetail: Equatable {
+    case connecting
+    case recording
+    case transcribing
+    case copied
+}
+
 public struct AppState: Equatable {
     public var mode: AppMode = .idle
+    public var phaseDetail: PhaseDetail? = nil
+    public var recordingStartedAt: Date? = nil
+    public var transcribingStartedAt: Date? = nil
 
     func statusDetail(selectedMic: String) -> String {
         switch mode {
         case .idle:
             return "Mic: \(selectedMic)"
         case .recording:
-            return "Tap to stop"
+            return "Mic: \(selectedMic)"
         case .transcribing:
-            return "Working…"
+            return "Transcribing…"
         case .error(let error):
             switch error {
             case .permissionDenied:

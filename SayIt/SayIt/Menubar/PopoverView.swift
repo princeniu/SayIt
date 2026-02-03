@@ -1,9 +1,29 @@
 import CoreAudio
+import Foundation
 import SwiftUI
 
 struct PopoverView: View {
     @EnvironmentObject private var appController: AppController
     @State private var selectedEngine = "System"
+    @AppStorage("transcriptionLanguage") private var transcriptionLanguage = "system"
+
+    struct LanguageOption: Identifiable, Equatable {
+        let id: String
+        let title: String
+    }
+
+    static let languageOptions: [LanguageOption] = [
+        LanguageOption(id: "system", title: "System (Recommended)"),
+        LanguageOption(id: "zh-Hans", title: "Chinese (Simplified)"),
+        LanguageOption(id: "en-US", title: "English")
+    ]
+
+    static func formatDuration(_ seconds: TimeInterval) -> String {
+        let totalSeconds = max(0, Int(seconds))
+        let minutes = totalSeconds / 60
+        let remainingSeconds = totalSeconds % 60
+        return String(format: "%02d:%02d", minutes, remainingSeconds)
+    }
 
     private var statusTitle: String {
         switch appController.state.mode {
@@ -50,6 +70,14 @@ struct PopoverView: View {
             }
             .buttonStyle(.borderedProminent)
 
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                if let text = secondaryStatusText(at: context.date) {
+                    Text(text)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             VStack(alignment: .leading, spacing: 6) {
                 Text("Microphone")
                     .font(.caption)
@@ -76,9 +104,49 @@ struct PopoverView: View {
                 }
                 .labelsHidden()
             }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Language")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Picker("Language", selection: $transcriptionLanguage) {
+                    ForEach(Self.languageOptions) { option in
+                        Text(option.title).tag(option.id)
+                    }
+                }
+                .labelsHidden()
+            }
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("Settings…") {
+                    appController.send(.openSettingsWindow)
+                }
+                .buttonStyle(.link)
+            }
         }
         .padding(16)
         .frame(width: 320)
+    }
+
+    private func secondaryStatusText(at date: Date) -> String? {
+        switch appController.state.mode {
+        case .recording:
+            guard let startedAt = appController.state.recordingStartedAt else { return nil }
+            let elapsed = date.timeIntervalSince(startedAt)
+            return Self.formatDuration(elapsed)
+        case .transcribing:
+            if let startedAt = appController.state.transcribingStartedAt {
+                if date.timeIntervalSince(startedAt) > 5 {
+                    return "Still working…"
+                }
+            }
+            return "Transcribing…"
+        case .idle, .error:
+            return nil
+        }
     }
 
     private var primaryButtonTitle: String {

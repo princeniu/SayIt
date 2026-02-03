@@ -8,4 +8,5 @@ public enum AppIntent: Equatable {
     case retryTranscribe
     case selectMic(AudioDeviceID)
     case openSettings
+    case openSettingsWindow
 }

@@ -8,6 +8,13 @@ final class AppStateStatusTests: XCTestCase {
         XCTAssertEqual(state.statusDetail(selectedMic: "Built-in"), "Mic: Built-in")
     }
 
+    func test_statusDetail_connecting_doesNotOverrideMic() {
+        var state = AppState(mode: .idle)
+        state.phaseDetail = .connecting
+
+        XCTAssertEqual(state.statusDetail(selectedMic: "Built-in"), "Mic: Built-in")
+    }
+
     func test_statusDetail_error_permission() {
         let state = AppState(mode: .error(.permissionDenied))
 

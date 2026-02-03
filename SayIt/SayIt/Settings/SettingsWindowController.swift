@@ -1,7 +1,11 @@
 import AppKit
 import SwiftUI
 
-final class SettingsWindowController {
+protocol SettingsWindowControlling {
+    func show()
+}
+
+final class SettingsWindowController: SettingsWindowControlling {
     private var window: NSWindow?
 
     func show() {

@@ -32,7 +32,7 @@ final class HUDManager {
             panel.setFrameOrigin(origin)
         }
 
-        panel.makeKeyAndOrderFront(nil)
+        panel.orderFrontRegardless()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             panel.orderOut(nil)
         }

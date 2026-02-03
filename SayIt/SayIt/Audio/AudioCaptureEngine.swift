@@ -6,6 +6,7 @@ protocol AudioCaptureEngineProtocol: AnyObject {
     func start(deviceID: AudioDeviceID?) throws
     func stopAndFinalize() throws -> AVAudioPCMBuffer
     func cancel()
+    var onFirstBuffer: (() -> Void)? { get set }
 }
 
 final class AudioCaptureEngine: AudioCaptureEngineProtocol {
@@ -21,6 +22,8 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
     private var buffers: [AVAudioPCMBuffer] = []
     private var isRunning = false
     private let bufferLock = NSLock()
+    var onFirstBuffer: (() -> Void)?
+    private var didEmitFirstBuffer = false
 
     init(engine: AVAudioEngine = AVAudioEngine()) {
         self.engine = engine
@@ -29,6 +32,7 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
     func start(deviceID: AudioDeviceID?) throws {
         guard !isRunning else { throw CaptureError.alreadyRunning }
         buffers.removeAll()
+        didEmitFirstBuffer = false
 
         let inputNode = engine.inputNode
         if let deviceID {
@@ -64,6 +68,7 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
     func stopAndFinalize() throws -> AVAudioPCMBuffer {
         guard isRunning else { throw CaptureError.notRunning }
         isRunning = false
+        didEmitFirstBuffer = false
 
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
@@ -75,6 +80,7 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
     func cancel() {
         buffers.removeAll()
         captureFormat = nil
+        didEmitFirstBuffer = false
         if isRunning {
             engine.inputNode.removeTap(onBus: 0)
             engine.stop()
@@ -83,6 +89,13 @@ final class AudioCaptureEngine: AudioCaptureEngineProtocol {
     }
 
     private func append(_ buffer: AVAudioPCMBuffer) {
+        if !didEmitFirstBuffer {
+            didEmitFirstBuffer = true
+            let handler = onFirstBuffer
+            DispatchQueue.main.async {
+                handler?()
+            }
+        }
         guard let copy = copyBuffer(buffer) else { return }
         bufferLock.lock()
         buffers.append(copy)
