@@ -33,7 +33,7 @@ final class HUDManager {
             let frame = anchorWindow.frame
             let origin = NSPoint(
                 x: frame.midX - panel.frame.width / 2,
-                y: frame.maxY - panel.frame.height - 12
+                y: frame.midY - panel.frame.height / 2
             )
             panel.setFrameOrigin(origin)
             anchorWindow.addChildWindow(panel, ordered: .above)
