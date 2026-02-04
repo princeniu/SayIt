@@ -7,4 +7,10 @@ struct AppControllerWhisperTests {
         controller.cancelModelDownload()
         #expect(controller.state.modelStatus == .idle)
     }
+
+    @Test func startModelDownload_setsModelStatusDownloading() async throws {
+        let controller = AppController(autoRequestPermissions: false)
+        controller.startModelDownload()
+        #expect(controller.state.modelStatus == .downloading(0))
+    }
 }

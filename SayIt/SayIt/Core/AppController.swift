@@ -183,6 +183,10 @@ final class AppController: ObservableObject {
         state.modelStatus = .idle
     }
 
+    func startModelDownload() {
+        state.modelStatus = .downloading(0)
+    }
+
     func setHUDAnchorWindow(_ window: NSWindow?) {
         hudManager.anchorWindow = window
     }

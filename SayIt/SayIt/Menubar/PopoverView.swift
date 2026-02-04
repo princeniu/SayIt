@@ -91,6 +91,10 @@ struct PopoverView: View {
         )
     }
 
+    private var downloadStatusState: DownloadStatusViewState {
+        DownloadStatusViewModel.state(for: appController.state.modelStatus)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             ForEach(Self.sectionOrderLayout(for: appController.state.mode), id: \.self) { section in
@@ -191,6 +195,8 @@ struct PopoverView: View {
         }
         .buttonStyle(.borderedProminent)
 
+        downloadStatusSection
+
         VStack(spacing: 6) {
             if Self.shouldShowSecondaryStatus(for: appController.state.mode) {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
@@ -217,6 +223,30 @@ struct PopoverView: View {
         Text(appController.state.statusDetail(selectedMic: appController.selectedMicName))
             .font(.caption)
             .foregroundStyle(.red)
+    }
+
+    @ViewBuilder
+    private var downloadStatusSection: some View {
+        switch downloadStatusState {
+        case .progress(let progress):
+            ProgressView(value: progress)
+                .progressViewStyle(.linear)
+                .frame(maxWidth: .infinity)
+        case .failed(let message):
+            VStack(spacing: 4) {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button("Retry") {
+                    appController.startModelDownload()
+                }
+                .buttonStyle(.link)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        case .hidden:
+            EmptyView()
+        }
     }
 
     private func secondaryStatusText(at date: Date) -> String? {
