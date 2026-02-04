@@ -20,7 +20,7 @@ Use this checklist for smoke testing before release.
 - Login item toggle changes launch-at-login behavior.
 - Global hotkey setting shows current binding.
 - Crash reporting toggle updates preference.
-- Engine selector shows System (recommended) and Pro disabled.
+- Engine selector shows System (recommended) and High Accuracy (Offline) • Pro.
 
 ## Whisper (Pro / Offline)
 - Switching Engine to Pro prompts download if the model is missing.
@@ -30,3 +30,7 @@ Use this checklist for smoke testing before release.
 - Whisper model selection works (Tiny/Base/Small).
 - After download completes, Pro engine produces non-empty text for a short sample.
 - Optional integration test: set `SAYIT_WHISPER_MODEL_PATH` to the local model file (e.g. `/Users/prince/Desktop/SayIt/.worktrees/whisper/SayIt/vendor/whisper.cpp/models/ggml-small.bin`) and run WhisperIntegrationTests.
+- Model files must live in the app sandbox:
+  - `~/Library/Containers/com.niu.SayIt/Data/Library/Application Support/SayIt/Models/<model>.bin`
+  - Example: `small.bin`
+- If download fails with DNS/network errors, verify the app can access the network and then retry.
