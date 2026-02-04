@@ -13,6 +13,13 @@ struct PopoverView: View {
         case error
     }
 
+    enum SettingsRow: Hashable {
+        case settingsButton
+        case microphone
+        case engine
+        case language
+    }
+
     struct LanguageOption: Identifiable, Equatable {
         let id: String
         let title: String
@@ -60,6 +67,10 @@ struct PopoverView: View {
         return sections
     }
 
+    static func settingsSectionOrderLayout() -> [SettingsRow] {
+        [.settingsButton, .microphone, .engine, .language]
+    }
+
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
@@ -99,6 +110,33 @@ struct PopoverView: View {
 
     @ViewBuilder
     private var settingsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ForEach(Self.settingsSectionOrderLayout(), id: \.self) { row in
+                switch row {
+                case .settingsButton:
+                    settingsButtonRow
+                case .microphone:
+                    microphoneRow
+                case .engine:
+                    engineRow
+                case .language:
+                    languageRow
+                }
+            }
+        }
+    }
+
+    private var settingsButtonRow: some View {
+        HStack {
+            Spacer()
+            Button("Settings…") {
+                appController.send(.openSettingsWindow)
+            }
+            .buttonStyle(.link)
+        }
+    }
+
+    private var microphoneRow: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Microphone")
                 .font(.caption)
@@ -113,7 +151,9 @@ struct PopoverView: View {
             }
             .labelsHidden()
         }
+    }
 
+    private var engineRow: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Engine")
                 .font(.caption)
@@ -125,7 +165,9 @@ struct PopoverView: View {
             }
             .labelsHidden()
         }
+    }
 
+    private var languageRow: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Language")
                 .font(.caption)
@@ -136,14 +178,6 @@ struct PopoverView: View {
                 }
             }
             .labelsHidden()
-        }
-
-        HStack {
-            Spacer()
-            Button("Settings…") {
-                appController.send(.openSettingsWindow)
-            }
-            .buttonStyle(.link)
         }
     }
 
