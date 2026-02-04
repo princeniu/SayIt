@@ -13,7 +13,9 @@ struct ContentView: View {
     }
 }
 
+#if !DISABLE_PREVIEWS
 #Preview {
     ContentView()
         .environmentObject(AppController())
 }
+#endif

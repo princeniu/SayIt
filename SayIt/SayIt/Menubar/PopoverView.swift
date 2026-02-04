@@ -308,7 +308,9 @@ private struct LevelMeterView: View {
     }
 }
 
+#if !DISABLE_PREVIEWS
 #Preview {
     PopoverView()
         .environmentObject(AppController())
 }
+#endif

@@ -48,6 +48,8 @@ struct SettingsView: View {
     }
 }
 
+#if !DISABLE_PREVIEWS
 #Preview {
     SettingsView()
 }
+#endif
