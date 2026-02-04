@@ -3,7 +3,7 @@
 ## Understanding Summary
 - Build a macOS menu bar dictation tool with a Popover UI; no Dock icon, no focus stealing.
 - Primary flow: Start Recording → Stop & Transcribe → auto-copy → HUD “Copied”.
-- Apple Speech is default engine; Whisper shown as Pro (disabled).
+- Apple Speech is default engine; Whisper is Pro (offline) with on-demand model download.
 - Dynamic microphone selection in-app; handle device changes and fallback.
 - Permissions requested once on first launch (mic + speech); denied states show guidance.
 - MVP includes global hotkey and login item; no history and no audio persistence.
@@ -35,7 +35,7 @@
 - **AudioCaptureEngine**: captures audio from selected device; finalize on stop; no disk persistence.
 - **TranscriptionEngine (protocol)**
   - **AppleSpeechEngine**: concrete implementation.
-  - **WhisperEngine**: placeholder only.
+  - **WhisperEngine**: local whisper.cpp implementation (Pro).
 - **ClipboardManager**: writes transcription to clipboard (primary success signal).
 - **HUDManager**: toast/HUD for copied, device switch, errors.
 
@@ -64,7 +64,9 @@
 - **Primary Button**: Start Recording / Stop & Transcribe
 - **Secondary** (Recording only): Cancel
 - **Microphone Selector**: dropdown showing current selection; device change handled dynamically
-- **Engine Selector**: System (recommended) / High Accuracy (Offline) [Pro disabled]
+- **Engine Selector**: System (recommended) / High Accuracy (Offline) [Pro]
+- **Pro Download**: prompt to download model if missing; show progress and allow cancel/retry
+- **Language Picker**: disabled when Engine is Pro (Whisper handles mixed language)
 - **Permissions Denied**: clear message + Open System Settings
 - **Audio Level Indicator**: system-like dot bar; visible only during recording; placed under recording duration
 
@@ -82,7 +84,6 @@
 - No push-to-talk
 - No history or transcript library
 - No audio storage
-- No Whisper implementation
 - No main window
 
 ## Risks / Mitigations
