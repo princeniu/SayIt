@@ -21,3 +21,13 @@ Use this checklist for smoke testing before release.
 - Global hotkey setting shows current binding.
 - Crash reporting toggle updates preference.
 - Engine selector shows System (recommended) and Pro disabled.
+
+## Whisper (Pro)
+- First launch prompts to download Whisper model; user can skip.
+- Download shows progress below the primary button.
+- Cancel download returns to idle without switching engine.
+- Download failure shows error with retry.
+- Download complete prompts to switch to Pro.
+- Engine selector allows switching between System and Pro.
+- Whisper failure prompts whether to fall back to System.
+- Model selection (tiny/base/small) updates the next run.
