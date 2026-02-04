@@ -20,6 +20,7 @@ final class AppController: ObservableObject {
     private let settingsUserDefaults: UserDefaults
     private var cancellables: Set<AnyCancellable> = []
     private let languageKey = "transcriptionLanguage"
+    private var hotkeyCancellable: AnyCancellable?
 
     init(
         permissionManager: PermissionManager = PermissionManager(),
@@ -59,21 +60,13 @@ final class AppController: ObservableObject {
         if autoRequestPermissions {
             self.permissionManager.requestPermissionsIfNeeded()
         }
-        do {
-            try hotkeyManager.register { [weak self] in
-                guard let self else { return }
-                switch self.state.mode {
-                case .idle:
-                    self.send(.startRecording)
-                case .recording:
-                    self.send(.stopAndTranscribe)
-                default:
-                    break
-                }
+        HotkeyStorage.ensureDefaults(in: settingsUserDefaults)
+        registerHotkey()
+        hotkeyCancellable = NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification, object: settingsUserDefaults)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.registerHotkey()
             }
-        } catch {
-            // TODO: surface hotkey registration failure
-        }
     }
 
     func send(_ intent: AppIntent) {
@@ -192,5 +185,24 @@ final class AppController: ObservableObject {
             return Locale.current
         }
         return Locale(identifier: stored)
+    }
+
+    private func registerHotkey() {
+        let hotkey = HotkeyStorage.load(from: settingsUserDefaults)
+        do {
+            try hotkeyManager.register(hotkey: hotkey) { [weak self] in
+                guard let self else { return }
+                switch self.state.mode {
+                case .idle:
+                    self.send(.startRecording)
+                case .recording:
+                    self.send(.stopAndTranscribe)
+                default:
+                    break
+                }
+            }
+        } catch {
+            // TODO: surface hotkey registration failure
+        }
     }
 }

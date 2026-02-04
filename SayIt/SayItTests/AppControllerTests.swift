@@ -225,6 +225,7 @@ import Testing
         audioCaptureEngine: audioCaptureEngine,
         transcriptionEngine: TestTranscriptionEngine(),
         hotkeyManager: hotkeyManager,
+        settingsUserDefaults: suite ?? .standard,
         autoRequestPermissions: false
     )
 
@@ -232,6 +233,50 @@ import Testing
 
     #expect(audioCaptureEngine.startCalled == true)
     #expect(controller.state.mode == AppMode.recording)
+}
+
+@Test func hotkeyRegister_usesDefaultHotkeyWhenMissing() async throws {
+    let suite = UserDefaults(suiteName: "AppControllerTests")
+    suite?.removePersistentDomain(forName: "AppControllerTests")
+    let hotkeyManager = TestHotkeyManager()
+
+    _ = AppController(
+        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, userDefaults: suite ?? .standard, useSystemStatus: false),
+        audioDeviceManager: AudioDeviceManager(startMonitoring: false),
+        audioCaptureEngine: TestAudioCaptureEngine(),
+        transcriptionEngine: TestTranscriptionEngine(),
+        hotkeyManager: hotkeyManager,
+        settingsUserDefaults: suite ?? .standard,
+        autoRequestPermissions: false
+    )
+
+    #expect(hotkeyManager.lastRegisteredHotkey == Hotkey.defaultValue)
+}
+
+@Test func hotkeyChange_reRegistersWithNewHotkey() async throws {
+    let suite = UserDefaults(suiteName: "AppControllerTests")
+    suite?.removePersistentDomain(forName: "AppControllerTests")
+    let hotkeyManager = TestHotkeyManager()
+
+    _ = AppController(
+        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, userDefaults: suite ?? .standard, useSystemStatus: false),
+        audioDeviceManager: AudioDeviceManager(startMonitoring: false),
+        audioCaptureEngine: TestAudioCaptureEngine(),
+        transcriptionEngine: TestTranscriptionEngine(),
+        hotkeyManager: hotkeyManager,
+        settingsUserDefaults: suite ?? .standard,
+        autoRequestPermissions: false
+    )
+
+    let newHotkey = Hotkey(
+        keyCode: 6,
+        modifiers: HotkeyModifiers(option: true, command: false, control: false, shift: false),
+        display: "⌥Z"
+    )
+    HotkeyStorage.save(newHotkey, into: suite ?? .standard)
+    NotificationCenter.default.post(name: UserDefaults.didChangeNotification, object: suite)
+
+    #expect(hotkeyManager.lastRegisteredHotkey == newHotkey)
 }
 
 @Test func audioLevel_updatesDuringRecording() async throws {
@@ -269,10 +314,12 @@ final class TestSettingsWindowController: SettingsWindowControlling {
 final class TestHotkeyManager: HotkeyManaging {
     private(set) var registerCalled = false
     private(set) var unregisterCalled = false
+    private(set) var lastRegisteredHotkey: Hotkey?
     private var handler: (() -> Void)?
 
-    func register(toggleHandler: @escaping () -> Void) throws {
+    func register(hotkey: Hotkey, toggleHandler: @escaping () -> Void) throws {
         registerCalled = true
+        lastRegisteredHotkey = hotkey
         handler = toggleHandler
     }
 
