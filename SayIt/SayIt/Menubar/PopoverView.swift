@@ -39,6 +39,13 @@ struct PopoverView: View {
         return false
     }
 
+    static func shouldShowHeader(for mode: AppMode) -> Bool {
+        if case .transcribing = mode {
+            return false
+        }
+        return true
+    }
+
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
@@ -78,13 +85,15 @@ struct PopoverView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Text(statusTitle)
-                    .font(.headline)
-                Spacer(minLength: 8)
-                Text(statusDetail)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+            if Self.shouldShowHeader(for: appController.state.mode) {
+                HStack(spacing: 8) {
+                    Text(statusTitle)
+                        .font(.headline)
+                    Spacer(minLength: 8)
+                    Text(statusDetail)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Button(action: primaryAction) {

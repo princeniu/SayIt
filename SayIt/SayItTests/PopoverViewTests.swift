@@ -39,6 +39,13 @@ import Testing
     #expect(!PopoverView.shouldShowSecondaryStatus(for: .error(.captureFailed)))
 }
 
+@Test func popoverView_shouldShowHeader_hidesDuringTranscribing() async throws {
+    #expect(PopoverView.shouldShowHeader(for: .recording))
+    #expect(PopoverView.shouldShowHeader(for: .idle))
+    #expect(!PopoverView.shouldShowHeader(for: .transcribing(isSlow: false)))
+    #expect(PopoverView.shouldShowHeader(for: .error(.captureFailed)))
+}
+
 @Test func popoverView_levelBarCount_clampsAndScales() async throws {
     #expect(PopoverView.levelBarCount(level: -0.2, maxBars: 12) == 0)
     #expect(PopoverView.levelBarCount(level: 0, maxBars: 12) == 0)
