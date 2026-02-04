@@ -14,12 +14,20 @@ public enum PhaseDetail: Equatable {
     case copied
 }
 
+public enum ModelStatus: Equatable {
+    case idle
+    case downloading(Double)
+    case ready(WhisperModelType)
+    case failed(String)
+}
+
 public struct AppState: Equatable {
     public var mode: AppMode = .idle
     public var phaseDetail: PhaseDetail? = nil
     public var recordingStartedAt: Date? = nil
     public var transcribingStartedAt: Date? = nil
     public var audioLevel: Double = 0
+    public var modelStatus: ModelStatus = .idle
 
     func statusDetail(selectedMic: String) -> String {
         switch mode {

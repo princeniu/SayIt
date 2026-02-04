@@ -4,7 +4,6 @@ import SwiftUI
 
 struct PopoverView: View {
     @EnvironmentObject private var appController: AppController
-    @State private var selectedEngine = "System"
     @AppStorage("transcriptionLanguage") private var transcriptionLanguage = "system"
 
     enum Section: Hashable {
@@ -71,6 +70,10 @@ struct PopoverView: View {
         [.settingsButton, .microphone, .engine, .language]
     }
 
+    static func shouldDisableLanguage(forEngine engine: TranscriptionEngineType) -> Bool {
+        engine == .whisper
+    }
+
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
@@ -89,6 +92,19 @@ struct PopoverView: View {
                 }
             }
         )
+    }
+
+    private var engineSelection: Binding<TranscriptionEngineType> {
+        Binding(
+            get: { appController.selectedEngine },
+            set: { newValue in
+                appController.setEngine(newValue)
+            }
+        )
+    }
+
+    private var downloadStatusState: DownloadStatusViewState {
+        DownloadStatusViewModel.state(for: appController.state.modelStatus)
     }
 
     var body: some View {
@@ -158,17 +174,17 @@ struct PopoverView: View {
             Text("Engine")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Picker("Engine", selection: $selectedEngine) {
-                Text("System (Recommended)").tag("System")
-                Text("High Accuracy (Offline) • Pro").tag("Pro")
-                    .disabled(true)
+            Picker("Engine", selection: engineSelection) {
+                Text(TranscriptionEngineType.system.displayTitle).tag(TranscriptionEngineType.system)
+                Text(TranscriptionEngineType.whisper.displayTitle).tag(TranscriptionEngineType.whisper)
             }
             .labelsHidden()
         }
     }
 
     private var languageRow: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        let isDisabled = Self.shouldDisableLanguage(forEngine: appController.selectedEngine)
+        return VStack(alignment: .leading, spacing: 6) {
             Text("Language")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -178,6 +194,9 @@ struct PopoverView: View {
                 }
             }
             .labelsHidden()
+            .disabled(isDisabled)
+            .allowsHitTesting(!isDisabled)
+            .opacity(isDisabled ? 0.6 : 1.0)
         }
     }
 
@@ -190,6 +209,8 @@ struct PopoverView: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
+
+        downloadStatusSection
 
         VStack(spacing: 6) {
             if Self.shouldShowSecondaryStatus(for: appController.state.mode) {
@@ -217,6 +238,42 @@ struct PopoverView: View {
         Text(appController.state.statusDetail(selectedMic: appController.selectedMicName))
             .font(.caption)
             .foregroundStyle(.red)
+    }
+
+    @ViewBuilder
+    private var downloadStatusSection: some View {
+        switch downloadStatusState {
+        case .hidden where appController.selectedEngine == .whisper && !appController.isWhisperModelReady:
+            VStack(spacing: 6) {
+                Text("Whisper model required")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button("Download Model") {
+                    appController.startModelDownload()
+                }
+                .buttonStyle(.link)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        case .progress(let progress):
+            ProgressView(value: progress)
+                .progressViewStyle(.linear)
+                .frame(maxWidth: .infinity)
+        case .failed(let message):
+            VStack(spacing: 4) {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button("Retry") {
+                    appController.startModelDownload()
+                }
+                .buttonStyle(.link)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        case .hidden:
+            EmptyView()
+        }
     }
 
     private func secondaryStatusText(at date: Date) -> String? {
@@ -271,7 +328,9 @@ private struct LevelMeterView: View {
     }
 }
 
+#if !DISABLE_PREVIEWS
 #Preview {
     PopoverView()
         .environmentObject(AppController())
 }
+#endif

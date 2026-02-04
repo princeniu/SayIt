@@ -1,14 +1,14 @@
 import Testing
 @testable import SayIt
 
-@Test func settingsViewModel_initializesFromManager() async throws {
+@MainActor @Test func settingsViewModel_initializesFromManager() async throws {
     let manager = TestLaunchAtLoginManager(isEnabled: true)
     let viewModel = SettingsViewModel(launchAtLoginManager: manager)
 
     #expect(viewModel.launchAtLoginEnabled == true)
 }
 
-@Test func settingsViewModel_toggleUpdatesManager() async throws {
+@MainActor @Test func settingsViewModel_toggleUpdatesManager() async throws {
     let manager = TestLaunchAtLoginManager(isEnabled: false)
     let viewModel = SettingsViewModel(launchAtLoginManager: manager)
 

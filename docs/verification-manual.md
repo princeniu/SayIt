@@ -20,14 +20,19 @@ Use this checklist for smoke testing before release.
 - Login item toggle changes launch-at-login behavior.
 - Global hotkey setting shows current binding.
 - Crash reporting toggle updates preference.
-- Engine selector shows System (recommended) and Pro disabled.
+- Engine selector shows System (recommended) and High Accuracy (Offline) • Pro.
 
-## Whisper (Pro)
-- First launch prompts to download Whisper model; user can skip.
-- Download shows progress below the primary button.
-- Cancel download returns to idle without switching engine.
-- Download failure shows error with retry.
-- Download complete prompts to switch to Pro.
-- Engine selector allows switching between System and Pro.
-- Whisper failure prompts whether to fall back to System.
-- Model selection (tiny/base/small) updates the next run.
+## Whisper (Pro / Offline)
+- Switching Engine to Pro prompts download if the model is missing.
+- Download progress shows under the primary button and can be canceled.
+- Failed downloads show a retry action.
+- Language picker becomes disabled when Engine is Pro.
+- Whisper model selection works (Tiny/Base/Small).
+- After download completes, Pro engine produces non-empty text for a short sample.
+- Optional integration test: set `SAYIT_WHISPER_MODEL_PATH` to the local model file (e.g. `/Users/prince/Desktop/SayIt/.worktrees/whisper/SayIt/vendor/whisper.cpp/models/ggml-small.bin`) and run WhisperIntegrationTests.
+- Model files must live in the app sandbox:
+  - `~/Library/Containers/com.niu.SayIt/Data/Library/Application Support/SayIt/Models/<model>.bin`
+  - Example: `small.bin`
+- If download fails with DNS/network errors, verify the app can access the network and then retry.
+- Offline copy option:
+  - Copy a local model into the sandbox path above (e.g. `small.bin`), then relaunch the app.

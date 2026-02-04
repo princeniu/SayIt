@@ -71,3 +71,8 @@ import Testing
     #expect(PopoverView.levelBarCount(level: 1.0, maxBars: 12) == 12)
     #expect(PopoverView.levelBarCount(level: 1.4, maxBars: 12) == 12)
 }
+
+@Test func popoverView_languageDisabledWhenUsingWhisper() async throws {
+    #expect(PopoverView.shouldDisableLanguage(forEngine: .system) == false)
+    #expect(PopoverView.shouldDisableLanguage(forEngine: .whisper) == true)
+}
