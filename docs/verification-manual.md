@@ -26,5 +26,7 @@ Use this checklist for smoke testing before release.
 - Switching Engine to Pro prompts download if the model is missing.
 - Download progress shows under the primary button and can be canceled.
 - Failed downloads show a retry action.
+- Language picker becomes disabled when Engine is Pro.
 - Whisper model selection works (Tiny/Base/Small).
 - After download completes, Pro engine produces non-empty text for a short sample.
+- Optional integration test: set `SAYIT_WHISPER_MODEL_PATH` to a local model file and run WhisperIntegrationTests.
