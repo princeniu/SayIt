@@ -39,20 +39,6 @@ struct PopoverView: View {
         return false
     }
 
-    static func shouldShowHeader(for mode: AppMode) -> Bool {
-        if case .transcribing = mode {
-            return false
-        }
-        return true
-    }
-
-    static func shouldShowStatusDetail(for mode: AppMode) -> Bool {
-        if case .error = mode {
-            return true
-        }
-        return false
-    }
-
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
@@ -60,23 +46,6 @@ struct PopoverView: View {
         let boosted = pow(clamped, 0.25)
         let scaled = (boosted * Double(maxBars)).rounded()
         return min(maxBars, max(0, Int(scaled)))
-    }
-
-    private var statusTitle: String {
-        switch appController.state.mode {
-        case .idle:
-            return "Ready"
-        case .recording:
-            return "Recording"
-        case .transcribing:
-            return "Transcribing"
-        case .error:
-            return "Error"
-        }
-    }
-
-    private var statusDetail: String {
-        appController.state.statusDetail(selectedMic: appController.selectedMicName)
     }
 
     private var micSelection: Binding<AudioDeviceID?> {
@@ -92,19 +61,6 @@ struct PopoverView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if Self.shouldShowHeader(for: appController.state.mode) {
-                HStack(spacing: 8) {
-                    Text(statusTitle)
-                        .font(.headline)
-                    Spacer(minLength: 8)
-                    if Self.shouldShowStatusDetail(for: appController.state.mode) {
-                        Text(statusDetail)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
             Button(action: primaryAction) {
                 Text(primaryButtonTitle)
                     .frame(maxWidth: .infinity)
