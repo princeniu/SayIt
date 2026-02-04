@@ -34,3 +34,5 @@ Use this checklist for smoke testing before release.
   - `~/Library/Containers/com.niu.SayIt/Data/Library/Application Support/SayIt/Models/<model>.bin`
   - Example: `small.bin`
 - If download fails with DNS/network errors, verify the app can access the network and then retry.
+- Offline copy option:
+  - Copy a local model into the sandbox path above (e.g. `small.bin`), then relaunch the app.
