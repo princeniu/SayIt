@@ -46,6 +46,13 @@ import Testing
     #expect(!PopoverView.shouldShowErrorStatus(for: .transcribing(isSlow: false)))
 }
 
+@Test func popoverView_sectionOrder_movesSettingsToTopAndErrorToBottom() async throws {
+    #expect(PopoverView.sectionOrderLayout(for: .idle) == [PopoverView.Section.settings, .actions])
+    #expect(PopoverView.sectionOrderLayout(for: .recording) == [PopoverView.Section.settings, .actions])
+    #expect(PopoverView.sectionOrderLayout(for: .transcribing(isSlow: false)) == [PopoverView.Section.settings, .actions])
+    #expect(PopoverView.sectionOrderLayout(for: .error(.captureFailed)) == [PopoverView.Section.settings, .actions, .error])
+}
+
 @Test func popoverView_levelBarCount_clampsAndScales() async throws {
     #expect(PopoverView.levelBarCount(level: -0.2, maxBars: 12) == 0)
     #expect(PopoverView.levelBarCount(level: 0, maxBars: 12) == 0)

@@ -7,6 +7,12 @@ struct PopoverView: View {
     @State private var selectedEngine = "System"
     @AppStorage("transcriptionLanguage") private var transcriptionLanguage = "system"
 
+    enum Section: Hashable {
+        case settings
+        case actions
+        case error
+    }
+
     struct LanguageOption: Identifiable, Equatable {
         let id: String
         let title: String
@@ -46,6 +52,14 @@ struct PopoverView: View {
         return false
     }
 
+    static func sectionOrderLayout(for mode: AppMode) -> [Section] {
+        var sections: [Section] = [.settings, .actions]
+        if shouldShowErrorStatus(for: mode) {
+            sections.append(.error)
+        }
+        return sections
+    }
+
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
@@ -68,89 +82,107 @@ struct PopoverView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Button(action: primaryAction) {
-                Text(primaryButtonTitle)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-
-            VStack(spacing: 6) {
-                if Self.shouldShowSecondaryStatus(for: appController.state.mode) {
-                    TimelineView(.periodic(from: .now, by: 1)) { context in
-                        if let text = secondaryStatusText(at: context.date) {
-                            HStack {
-                                Spacer()
-                                Text(text)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                            }
-                        }
-                    }
+            ForEach(Self.sectionOrderLayout(for: appController.state.mode), id: \.self) { section in
+                switch section {
+                case .settings:
+                    settingsSection
+                case .actions:
+                    actionsSection
+                case .error:
+                    errorSection
                 }
-
-                if Self.shouldShowLevel(for: appController.state.mode) {
-                    LevelMeterView(level: appController.state.audioLevel)
-                }
-            }
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Microphone")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Picker("Microphone", selection: micSelection) {
-                    if appController.micDevices.isEmpty {
-                        Text("No input devices").tag(Optional<AudioDeviceID>.none)
-                    }
-                    ForEach(appController.micDevices) { device in
-                        Text(device.name).tag(Optional(device.id))
-                    }
-                }
-                .labelsHidden()
-            }
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Engine")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Picker("Engine", selection: $selectedEngine) {
-                    Text("System (Recommended)").tag("System")
-                    Text("High Accuracy (Offline) • Pro").tag("Pro")
-                        .disabled(true)
-                }
-                .labelsHidden()
-            }
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Language")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Picker("Language", selection: $transcriptionLanguage) {
-                    ForEach(Self.languageOptions) { option in
-                        Text(option.title).tag(option.id)
-                    }
-                }
-                .labelsHidden()
-            }
-
-            if Self.shouldShowErrorStatus(for: appController.state.mode) {
-                Text(appController.state.statusDetail(selectedMic: appController.selectedMicName))
-                    .font(.caption)
-                    .foregroundStyle(.red)
-            }
-
-            Divider()
-
-            HStack {
-                Spacer()
-                Button("Settings…") {
-                    appController.send(.openSettingsWindow)
-                }
-                .buttonStyle(.link)
             }
         }
         .padding(16)
         .frame(width: 320)
+    }
+
+    @ViewBuilder
+    private var settingsSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Microphone")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Picker("Microphone", selection: micSelection) {
+                if appController.micDevices.isEmpty {
+                    Text("No input devices").tag(Optional<AudioDeviceID>.none)
+                }
+                ForEach(appController.micDevices) { device in
+                    Text(device.name).tag(Optional(device.id))
+                }
+            }
+            .labelsHidden()
+        }
+
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Engine")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Picker("Engine", selection: $selectedEngine) {
+                Text("System (Recommended)").tag("System")
+                Text("High Accuracy (Offline) • Pro").tag("Pro")
+                    .disabled(true)
+            }
+            .labelsHidden()
+        }
+
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Language")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Picker("Language", selection: $transcriptionLanguage) {
+                ForEach(Self.languageOptions) { option in
+                    Text(option.title).tag(option.id)
+                }
+            }
+            .labelsHidden()
+        }
+
+        HStack {
+            Spacer()
+            Button("Settings…") {
+                appController.send(.openSettingsWindow)
+            }
+            .buttonStyle(.link)
+        }
+    }
+
+    @ViewBuilder
+    private var actionsSection: some View {
+        Divider()
+
+        Button(action: primaryAction) {
+            Text(primaryButtonTitle)
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+
+        VStack(spacing: 6) {
+            if Self.shouldShowSecondaryStatus(for: appController.state.mode) {
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    if let text = secondaryStatusText(at: context.date) {
+                        HStack {
+                            Spacer()
+                            Text(text)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                    }
+                }
+            }
+
+            if Self.shouldShowLevel(for: appController.state.mode) {
+                LevelMeterView(level: appController.state.audioLevel)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var errorSection: some View {
+        Text(appController.state.statusDetail(selectedMic: appController.selectedMicName))
+            .font(.caption)
+            .foregroundStyle(.red)
     }
 
     private func secondaryStatusText(at date: Date) -> String? {
