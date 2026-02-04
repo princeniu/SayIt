@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SUBMODULE_DIR="${ROOT_DIR}/SayIt/SayIt/ThirdParty/whisper.cpp"
+SUBMODULE_DIR="${ROOT_DIR}/SayIt/vendor/whisper.cpp"
 OUTPUT_XCFRAMEWORK="${ROOT_DIR}/SayIt/vendor/whisper.cpp/build-apple/whisper.xcframework"
 BUILD_DIR="${SUBMODULE_DIR}/build-macos"
 HEADERS_DIR="${SUBMODULE_DIR}/build-macos-headers"

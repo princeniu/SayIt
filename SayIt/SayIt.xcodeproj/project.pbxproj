@@ -107,6 +107,7 @@
 			buildConfigurationList = A335B38B2F31A502009D0F31 /* Build configuration list for PBXNativeTarget "SayIt" */;
 			buildPhases = (
 				A335B3642F31A500009D0F31 /* Sources */,
+				B0B0D5F0E1C84F67A17C8D30 /* Build Whisper XCFramework */,
 				A335B3652F31A500009D0F31 /* Frameworks */,
 				A335B3662F31A500009D0F31 /* Resources */,
 			);
@@ -213,6 +214,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B0B0D5F0E1C84F67A17C8D30 /* Build Whisper XCFramework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Build Whisper XCFramework";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "if [ ! -d \"${SRCROOT}/vendor/whisper.cpp/build-apple/whisper.xcframework\" ]; then\n  \"${SRCROOT}/../scripts/build-whisper-macos-xcframework.sh\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A335B3662F31A500009D0F31 /* Resources */ = {

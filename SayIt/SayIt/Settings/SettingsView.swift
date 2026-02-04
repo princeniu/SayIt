@@ -2,12 +2,17 @@ import SwiftUI
 
 @MainActor
 struct SettingsView: View {
-    @StateObject private var viewModel = SettingsViewModel()
+    @StateObject private var viewModel: SettingsViewModel
     @State private var crashReportingEnabled = true
     @State private var showHotkeySheet = false
     @AppStorage("hotkeyDisplay") private var hotkeyDisplay = Hotkey.defaultValue.display
     @AppStorage("hotkeyKeyCode") private var hotkeyKeyCode = Int(Hotkey.defaultValue.keyCode)
     @AppStorage("hotkeyModifiers") private var hotkeyModifiers = Int(Hotkey.defaultValue.modifiers.carbonValue)
+
+    @MainActor
+    init() {
+        _viewModel = StateObject(wrappedValue: SettingsViewModel())
+    }
 
     var body: some View {
         Form {
