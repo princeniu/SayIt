@@ -16,7 +16,9 @@ final class WhisperEngine: TranscriptionEngine {
         }
 
         let samples = try WhisperAudioConverter.toMono16kFloat(buffer)
-        let languageCode = locale.language.languageCode?.identifier ?? "en"
+        let languageCode = locale.identifier == "auto"
+            ? "auto"
+            : (locale.language.languageCode?.identifier ?? "en")
 
         return try await Task.detached(priority: .userInitiated) {
             let context = try WhisperCppContext(modelURL: modelURL)

@@ -73,6 +73,6 @@ import Testing
 }
 
 @Test func popoverView_languageDisabledWhenUsingWhisper() async throws {
-    #expect(PopoverView.shouldDisableLanguage(forEngine: "System") == false)
-    #expect(PopoverView.shouldDisableLanguage(forEngine: "Pro") == true)
+    #expect(PopoverView.shouldDisableLanguage(forEngine: .system) == false)
+    #expect(PopoverView.shouldDisableLanguage(forEngine: .whisper) == true)
 }

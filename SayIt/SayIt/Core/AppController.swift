@@ -8,11 +8,13 @@ final class AppController: ObservableObject {
     @Published private(set) var state = AppState()
     @Published private(set) var micDevices: [AudioInputDevice] = []
     @Published private(set) var selectedMicID: AudioDeviceID?
+    @Published private(set) var selectedEngine: TranscriptionEngineType
 
     private let permissionManager: PermissionManager
     private let audioDeviceManager: AudioDeviceManager
     private let audioCaptureEngine: AudioCaptureEngineProtocol
     private let transcriptionEngine: TranscriptionEngine
+    private let whisperEngineFactory: (WhisperModelType, @escaping (WhisperModelType) -> URL?) -> TranscriptionEngine
     private let clipboardManager: ClipboardManager
     private let hudManager: HUDManager
     private let settingsWindowController: SettingsWindowControlling
@@ -22,6 +24,8 @@ final class AppController: ObservableObject {
     private let modelDownloader: ModelDownloader
     private var cancellables: Set<AnyCancellable> = []
     private let languageKey = "transcriptionLanguage"
+    private let engineKey = "transcriptionEngine"
+    private let preferredModelKey = "whisperPreferredModel"
     private var hotkeyCancellable: AnyCancellable?
 
     init(
@@ -29,6 +33,9 @@ final class AppController: ObservableObject {
         audioDeviceManager: AudioDeviceManager = AudioDeviceManager(),
         audioCaptureEngine: AudioCaptureEngineProtocol = AudioCaptureEngine(),
         transcriptionEngine: TranscriptionEngine = AppleSpeechEngine(),
+        whisperEngineFactory: @escaping (WhisperModelType, @escaping (WhisperModelType) -> URL?) -> TranscriptionEngine = { type, provider in
+            WhisperEngine(modelType: type, modelProvider: provider)
+        },
         clipboardManager: ClipboardManager = ClipboardManager(),
         hudManager: HUDManager = HUDManager(),
         settingsWindowController: SettingsWindowControlling = SettingsWindowController(),
@@ -49,8 +56,10 @@ final class AppController: ObservableObject {
         self.settingsUserDefaults = settingsUserDefaults
         self.modelManager = modelManager
         self.modelDownloader = modelDownloader
+        self.selectedEngine = TranscriptionEngineType(rawValue: settingsUserDefaults.string(forKey: engineKey) ?? "") ?? .system
         self.micDevices = audioDeviceManager.devices
         self.selectedMicID = audioDeviceManager.selectedDeviceID
+        self.whisperEngineFactory = whisperEngineFactory
         audioDeviceManager.$devices
             .receive(on: DispatchQueue.main)
             .sink { [weak self] devices in
@@ -66,6 +75,8 @@ final class AppController: ObservableObject {
         if autoRequestPermissions {
             self.permissionManager.requestPermissionsIfNeeded()
         }
+        configureModelDownloader()
+        refreshModelStatus()
         HotkeyStorage.ensureDefaults(in: settingsUserDefaults)
         registerHotkey()
         hotkeyCancellable = NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification, object: settingsUserDefaults)
@@ -135,10 +146,10 @@ final class AppController: ObservableObject {
                         }
                         return
                     }
-                    let text = try await self.transcriptionEngine.transcribe(
-                        buffer: buffer,
-                        locale: self.transcriptionLocale()
-                    )
+                    let engine = self.transcriptionEngineForCurrentSelection()
+                    let locale = self.transcriptionLocaleForCurrentEngine()
+                    print("SayIt: transcribing with engine=\(self.selectedEngine.rawValue) locale=\(locale.identifier)")
+                    let text = try await engine.transcribe(buffer: buffer, locale: locale)
                     await MainActor.run {
                         print("SayIt: transcription succeeded. textLength=\(text.count)")
                         _ = self.clipboardManager.write(text)
@@ -184,7 +195,17 @@ final class AppController: ObservableObject {
     }
 
     func startModelDownload() {
+        let type = preferredModel()
+        let url = modelManager.remoteURL(for: type)
         state.modelStatus = .downloading(0)
+        modelDownloader.start(url: url)
+    }
+
+    func setEngine(_ engine: TranscriptionEngineType) {
+        selectedEngine = engine
+        settingsUserDefaults.set(engine.rawValue, forKey: engineKey)
+        print("SayIt: engine changed to \(engine.rawValue)")
+        refreshModelStatus()
     }
 
     func setHUDAnchorWindow(_ window: NSWindow?) {
@@ -194,6 +215,17 @@ final class AppController: ObservableObject {
     var selectedMicName: String {
         guard let selected = selectedMicID else { return "None" }
         return micDevices.first(where: { $0.id == selected })?.name ?? "Unknown"
+    }
+
+    var isWhisperModelReady: Bool {
+        modelURL(for: preferredModel()) != nil
+    }
+
+    private func transcriptionLocaleForCurrentEngine() -> Locale {
+        if selectedEngine == .whisper {
+            return Locale(identifier: "auto")
+        }
+        return transcriptionLocale()
     }
 
     private func transcriptionLocale() -> Locale {
@@ -209,6 +241,70 @@ final class AppController: ObservableObject {
             resolvedIdentifier = stored
         }
         return Locale(identifier: resolvedIdentifier)
+    }
+
+    private func transcriptionEngineForCurrentSelection() -> TranscriptionEngine {
+        switch selectedEngine {
+        case .system:
+            return transcriptionEngine
+        case .whisper:
+            return whisperEngineFactory(preferredModel()) { [weak self] type in
+                self?.modelURL(for: type)
+            }
+        }
+    }
+
+    private func preferredModel() -> WhisperModelType {
+        if let raw = settingsUserDefaults.string(forKey: preferredModelKey),
+           let value = WhisperModelType(rawValue: raw) {
+            return value
+        }
+        return .small
+    }
+
+    private func modelURL(for type: WhisperModelType) -> URL? {
+        if let envPath = ProcessInfo.processInfo.environment["SAYIT_WHISPER_MODEL_PATH"] {
+            return URL(fileURLWithPath: envPath)
+        }
+        let localURL = modelManager.localURL(for: type)
+        return FileManager.default.fileExists(atPath: localURL.path) ? localURL : nil
+    }
+
+    private func refreshModelStatus() {
+        guard selectedEngine == .whisper else {
+            state.modelStatus = .idle
+            return
+        }
+        let type = preferredModel()
+        if modelManager.isModelReady(type) || modelURL(for: type) != nil {
+            state.modelStatus = .ready(type)
+        } else {
+            state.modelStatus = .idle
+        }
+    }
+
+    private func configureModelDownloader() {
+        modelDownloader.onProgress = { [weak self] progress in
+            self?.state.modelStatus = .downloading(progress)
+        }
+        modelDownloader.onCompleted = { [weak self] location in
+            guard let self else { return }
+            let type = self.preferredModel()
+            do {
+                try self.modelManager.ensureModelsDirectory()
+                let destination = self.modelManager.localURL(for: type)
+                if FileManager.default.fileExists(atPath: destination.path) {
+                    try FileManager.default.removeItem(at: destination)
+                }
+                try FileManager.default.moveItem(at: location, to: destination)
+                self.state.modelStatus = .ready(type)
+            } catch {
+                self.state.modelStatus = .failed("Model save failed")
+            }
+        }
+        modelDownloader.onFailed = { [weak self] message in
+            self?.state.modelStatus = .failed(message)
+        }
     }
 
     private func registerHotkey() {
