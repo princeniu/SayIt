@@ -53,6 +53,15 @@ import Testing
     #expect(PopoverView.sectionOrderLayout(for: .error(.captureFailed)) == [PopoverView.Section.settings, .actions, .error])
 }
 
+@Test func popoverView_settingsSectionOrder_placesSettingsButtonFirst() async throws {
+    #expect(PopoverView.settingsSectionOrderLayout() == [
+        PopoverView.SettingsRow.settingsButton,
+        .microphone,
+        .engine,
+        .language
+    ])
+}
+
 @Test func popoverView_levelBarCount_clampsAndScales() async throws {
     #expect(PopoverView.levelBarCount(level: -0.2, maxBars: 12) == 0)
     #expect(PopoverView.levelBarCount(level: 0, maxBars: 12) == 0)
