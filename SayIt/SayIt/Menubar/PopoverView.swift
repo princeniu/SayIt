@@ -46,6 +46,13 @@ struct PopoverView: View {
         return true
     }
 
+    static func shouldShowStatusDetail(for mode: AppMode) -> Bool {
+        if case .error = mode {
+            return true
+        }
+        return false
+    }
+
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
@@ -90,9 +97,11 @@ struct PopoverView: View {
                     Text(statusTitle)
                         .font(.headline)
                     Spacer(minLength: 8)
-                    Text(statusDetail)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    if Self.shouldShowStatusDetail(for: appController.state.mode) {
+                        Text(statusDetail)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
 
