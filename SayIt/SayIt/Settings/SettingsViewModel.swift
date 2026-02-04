@@ -4,6 +4,7 @@ import Foundation
 @MainActor
 final class SettingsViewModel: ObservableObject {
     @Published private(set) var launchAtLoginEnabled: Bool
+    @Published var preferredModel: WhisperModelType = .small
 
     private let launchAtLoginManager: LaunchAtLoginManaging
 

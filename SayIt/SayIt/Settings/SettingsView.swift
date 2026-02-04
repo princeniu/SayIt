@@ -18,6 +18,11 @@ struct SettingsView: View {
                     set: { viewModel.setLaunchAtLoginEnabled($0) }
                 )
             )
+            Picker("Whisper Model", selection: $viewModel.preferredModel) {
+                ForEach(WhisperModelType.allCases, id: \.self) { model in
+                    Text(model.rawValue.capitalized).tag(model)
+                }
+            }
             HStack {
                 Text("Global hotkey")
                 Spacer()
@@ -30,7 +35,7 @@ struct SettingsView: View {
             }
             Toggle("Crash reporting", isOn: $crashReportingEnabled)
         }
-        .frame(width: 360, height: 180)
+        .frame(width: 360, height: 220)
         .padding()
         .sheet(isPresented: $showHotkeySheet) {
             HotkeyCaptureSheet { hotkey in
