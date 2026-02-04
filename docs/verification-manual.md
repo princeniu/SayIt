@@ -29,4 +29,4 @@ Use this checklist for smoke testing before release.
 - Language picker becomes disabled when Engine is Pro.
 - Whisper model selection works (Tiny/Base/Small).
 - After download completes, Pro engine produces non-empty text for a short sample.
-- Optional integration test: set `SAYIT_WHISPER_MODEL_PATH` to a local model file and run WhisperIntegrationTests.
+- Optional integration test: set `SAYIT_WHISPER_MODEL_PATH` to the local model file (e.g. `/Users/prince/Desktop/SayIt/.worktrees/whisper/SayIt/vendor/whisper.cpp/models/ggml-small.bin`) and run WhisperIntegrationTests.
