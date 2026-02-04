@@ -201,7 +201,14 @@ final class AppController: ObservableObject {
         guard let stored, !stored.isEmpty, stored != "system" else {
             return Locale.current
         }
-        return Locale(identifier: stored)
+        let resolvedIdentifier: String
+        switch stored {
+        case "zh-Hans":
+            resolvedIdentifier = "zh-Hans-CN"
+        default:
+            resolvedIdentifier = stored
+        }
+        return Locale(identifier: resolvedIdentifier)
     }
 
     private func registerHotkey() {

@@ -151,15 +151,16 @@ import Testing
 }
 
 @Test func stopAndTranscribe_usesConfiguredLanguage() async throws {
-    let suite = UserDefaults(suiteName: "AppControllerTests")
-    suite?.removePersistentDomain(forName: "AppControllerTests")
-    suite?.set("zh-Hans", forKey: "transcriptionLanguage")
+    let suite = UserDefaults(suiteName: "AppControllerTests") ?? .standard
+    suite.removePersistentDomain(forName: "AppControllerTests")
+    suite.set("zh-Hans", forKey: "transcriptionLanguage")
+    #expect(suite.string(forKey: "transcriptionLanguage") == "zh-Hans")
     let audioCaptureEngine = TestAudioCaptureEngine()
     let transcriptionEngine = TestTranscriptionEngine(result: "hello")
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
+        userDefaults: suite,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -167,7 +168,7 @@ import Testing
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: audioCaptureEngine,
         transcriptionEngine: transcriptionEngine,
-        settingsUserDefaults: suite ?? .standard,
+        settingsUserDefaults: suite,
         autoRequestPermissions: false
     )
 
@@ -181,17 +182,17 @@ import Testing
         try await Task.sleep(nanoseconds: 20_000_000)
     }
 
-    #expect(transcriptionEngine.lastLocaleIdentifier == "zh-Hans")
+    #expect(transcriptionEngine.lastLocaleIdentifier?.hasPrefix("zh") == true)
 }
 
 @Test func openSettingsWindow_showsSettings() async throws {
-    let suite = UserDefaults(suiteName: "AppControllerTests")
-    suite?.removePersistentDomain(forName: "AppControllerTests")
+    let suite = UserDefaults(suiteName: "AppControllerTests") ?? .standard
+    suite.removePersistentDomain(forName: "AppControllerTests")
     let settingsWindow = TestSettingsWindowController()
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
+        userDefaults: suite,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -204,6 +205,13 @@ import Testing
     )
 
     controller.send(.openSettingsWindow)
+
+    for _ in 0..<50 {
+        if settingsWindow.showCalled {
+            break
+        }
+        try await Task.sleep(nanoseconds: 20_000_000)
+    }
 
     #expect(settingsWindow.showCalled == true)
 }

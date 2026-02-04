@@ -61,7 +61,7 @@ enum HotkeyStorage {
         let keyCode = userDefaults.object(forKey: keyCodeKey) as? Int
         let modifiers = userDefaults.object(forKey: modifiersKey) as? Int
         let display = userDefaults.string(forKey: displayKey)
-        guard let keyCode, let modifiers else {
+        guard let keyCode, let modifiers, let display else {
             ensureDefaults(in: userDefaults)
             return Hotkey.defaultValue
         }
@@ -71,8 +71,7 @@ enum HotkeyStorage {
             control: modifiers & Int(controlKey) != 0,
             shift: modifiers & Int(shiftKey) != 0
         )
-        let resolvedDisplay = display ?? (decodedModifiers.display + "?")
-        return Hotkey(keyCode: UInt32(keyCode), modifiers: decodedModifiers, display: resolvedDisplay)
+        return Hotkey(keyCode: UInt32(keyCode), modifiers: decodedModifiers, display: display)
     }
 
     static func save(_ hotkey: Hotkey, into userDefaults: UserDefaults) {

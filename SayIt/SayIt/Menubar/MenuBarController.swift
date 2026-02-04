@@ -2,6 +2,7 @@ import AppKit
 import Combine
 import SwiftUI
 
+@MainActor
 final class MenuBarController {
     private let statusItem: NSStatusItem
     private let popover: NSPopover
