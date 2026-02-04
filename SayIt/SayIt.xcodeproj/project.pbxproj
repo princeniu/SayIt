@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B0B0D5E7E1C84F67A17C8D30 /* whisper.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0B0D5E6E1C84F67A17C8D30 /* whisper.xcframework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		A335B3782F31A502009D0F31 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,7 @@
 		A335B3682F31A500009D0F31 /* SayIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SayIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A335B3772F31A502009D0F31 /* SayItTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SayItTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A335B3812F31A502009D0F31 /* SayItUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SayItUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0B0D5E6E1C84F67A17C8D30 /* whisper.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = whisper.xcframework; path = "vendor/whisper.cpp/build-apple/whisper.xcframework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0B0D5E7E1C84F67A17C8D30 /* whisper.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +84,7 @@
 				A335B36A2F31A500009D0F31 /* SayIt */,
 				A335B37A2F31A502009D0F31 /* SayItTests */,
 				A335B3842F31A502009D0F31 /* SayItUITests */,
+				B0B0D5E6E1C84F67A17C8D30 /* whisper.xcframework */,
 				A335B3692F31A500009D0F31 /* Products */,
 			);
 			sourceTree = "<group>";

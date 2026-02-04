@@ -1,4 +1,5 @@
 import AVFoundation
+import Foundation
 
 final class WhisperEngine: TranscriptionEngine {
     private let modelProvider: (WhisperModelType) -> URL?
@@ -10,9 +11,16 @@ final class WhisperEngine: TranscriptionEngine {
     }
 
     func transcribe(buffer: AVAudioPCMBuffer, locale: Locale) async throws -> String {
-        guard modelProvider(modelType) != nil else {
+        guard let modelURL = modelProvider(modelType) else {
             throw NSError(domain: "Whisper", code: 1, userInfo: [NSLocalizedDescriptionKey: "Model not ready"])
         }
-        return ""
+
+        let samples = try WhisperAudioConverter.toMono16kFloat(buffer)
+        let languageCode = locale.language.languageCode?.identifier ?? "en"
+
+        return try await Task.detached(priority: .userInitiated) {
+            let context = try WhisperCppContext(modelURL: modelURL)
+            return try context.transcribe(samples: samples, languageCode: languageCode)
+        }.value
     }
 }
