@@ -32,4 +32,10 @@ final class AppStateStatusTests: XCTestCase {
 
         XCTAssertEqual(state.statusDetail(selectedMic: "Any"), "Transcription failed")
     }
+
+    func test_statusDetail_transcribing_isEmpty() {
+        let state = AppState(mode: .transcribing(isSlow: false))
+
+        XCTAssertEqual(state.statusDetail(selectedMic: "Any"), "")
+    }
 }

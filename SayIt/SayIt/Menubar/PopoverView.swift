@@ -32,6 +32,13 @@ struct PopoverView: View {
         return false
     }
 
+    static func shouldShowSecondaryStatus(for mode: AppMode) -> Bool {
+        if case .recording = mode {
+            return true
+        }
+        return false
+    }
+
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
@@ -87,14 +94,16 @@ struct PopoverView: View {
             .buttonStyle(.borderedProminent)
 
             VStack(spacing: 6) {
-                TimelineView(.periodic(from: .now, by: 1)) { context in
-                    if let text = secondaryStatusText(at: context.date) {
-                        HStack {
-                            Spacer()
-                            Text(text)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            Spacer()
+                if Self.shouldShowSecondaryStatus(for: appController.state.mode) {
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        if let text = secondaryStatusText(at: context.date) {
+                            HStack {
+                                Spacer()
+                                Text(text)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                            }
                         }
                     }
                 }
@@ -163,14 +172,7 @@ struct PopoverView: View {
             guard let startedAt = appController.state.recordingStartedAt else { return nil }
             let elapsed = date.timeIntervalSince(startedAt)
             return Self.formatDuration(elapsed)
-        case .transcribing:
-            if let startedAt = appController.state.transcribingStartedAt {
-                if date.timeIntervalSince(startedAt) > 5 {
-                    return "Still working…"
-                }
-            }
-            return "Transcribing…"
-        case .idle, .error:
+        case .idle, .transcribing, .error:
             return nil
         }
     }
@@ -213,14 +215,6 @@ private struct LevelMeterView: View {
             }
         }
         .animation(.easeOut(duration: 0.12), value: activeBars)
-#if DEBUG
-        .overlay(alignment: .topTrailing) {
-            Text(String(format: "%.4f", level))
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .offset(x: 8, y: -10)
-        }
-#endif
     }
 }
 

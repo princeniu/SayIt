@@ -28,7 +28,7 @@ public struct AppState: Equatable {
         case .recording:
             return "Mic: \(selectedMic)"
         case .transcribing:
-            return "Transcribing…"
+            return ""
         case .error(let error):
             switch error {
             case .permissionDenied:
