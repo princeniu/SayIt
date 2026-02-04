@@ -225,6 +225,7 @@
 			);
 			name = "Build Whisper XCFramework";
 			outputPaths = (
+				"$(SRCROOT)/vendor/whisper.cpp/build-apple/whisper.xcframework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
