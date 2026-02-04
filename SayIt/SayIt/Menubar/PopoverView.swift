@@ -71,6 +71,10 @@ struct PopoverView: View {
         [.settingsButton, .microphone, .engine, .language]
     }
 
+    static func shouldDisableLanguage(forEngine engine: String) -> Bool {
+        engine == "Pro"
+    }
+
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
         guard maxBars > 0 else { return 0 }
         let clamped = min(1, max(0, level))
@@ -172,7 +176,8 @@ struct PopoverView: View {
     }
 
     private var languageRow: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        let isDisabled = Self.shouldDisableLanguage(forEngine: selectedEngine)
+        return VStack(alignment: .leading, spacing: 6) {
             Text("Language")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -182,6 +187,8 @@ struct PopoverView: View {
                 }
             }
             .labelsHidden()
+            .disabled(isDisabled)
+            .opacity(isDisabled ? 0.6 : 1.0)
         }
     }
 
