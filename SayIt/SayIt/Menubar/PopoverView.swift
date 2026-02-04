@@ -6,6 +6,9 @@ struct PopoverView: View {
     @EnvironmentObject private var appController: AppController
     @AppStorage("transcriptionLanguage") private var transcriptionLanguage = "system"
 
+    static let cardSpacing: CGFloat = 12
+    static let contentWidth: CGFloat = 320
+
     enum Section: Hashable {
         case settings
         case actions
@@ -108,20 +111,21 @@ struct PopoverView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Self.cardSpacing) {
             ForEach(Self.sectionOrderLayout(for: appController.state.mode), id: \.self) { section in
                 switch section {
                 case .settings:
-                    settingsSection
+                    settingsSection.popoverCard()
                 case .actions:
-                    actionsSection
+                    actionsSection.popoverCard()
                 case .error:
                     errorSection
                 }
             }
         }
         .padding(16)
-        .frame(width: 320)
+        .frame(width: Self.contentWidth)
+        .background(Theme.Colors.base)
     }
 
     @ViewBuilder
@@ -156,7 +160,7 @@ struct PopoverView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Microphone")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.Colors.textSecondary)
             Picker("Microphone", selection: micSelection) {
                 if appController.micDevices.isEmpty {
                     Text("No input devices").tag(Optional<AudioDeviceID>.none)
@@ -173,7 +177,7 @@ struct PopoverView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Engine")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.Colors.textSecondary)
             Picker("Engine", selection: engineSelection) {
                 Text(TranscriptionEngineType.system.displayTitle).tag(TranscriptionEngineType.system)
                 Text(TranscriptionEngineType.whisper.displayTitle).tag(TranscriptionEngineType.whisper)
@@ -187,7 +191,7 @@ struct PopoverView: View {
         return VStack(alignment: .leading, spacing: 6) {
             Text("Language")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.Colors.textSecondary)
             Picker("Language", selection: $transcriptionLanguage) {
                 ForEach(Self.languageOptions) { option in
                     Text(option.title).tag(option.id)
@@ -202,8 +206,6 @@ struct PopoverView: View {
 
     @ViewBuilder
     private var actionsSection: some View {
-        Divider()
-
         Button(action: primaryAction) {
             Text(primaryButtonTitle)
                 .frame(maxWidth: .infinity)
@@ -220,7 +222,7 @@ struct PopoverView: View {
                             Spacer()
                             Text(text)
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Theme.Colors.textSecondary)
                             Spacer()
                         }
                     }
@@ -237,7 +239,7 @@ struct PopoverView: View {
     private var errorSection: some View {
         Text(appController.state.statusDetail(selectedMic: appController.selectedMicName))
             .font(.caption)
-            .foregroundStyle(.red)
+            .foregroundStyle(Theme.Colors.error)
     }
 
     @ViewBuilder
@@ -247,7 +249,7 @@ struct PopoverView: View {
             VStack(spacing: 6) {
                 Text("Whisper model required")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.Colors.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Button("Download Model") {
                     appController.startModelDownload()
@@ -263,7 +265,7 @@ struct PopoverView: View {
             VStack(spacing: 4) {
                 Text(message)
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Theme.Colors.error)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Button("Retry") {
                     appController.startModelDownload()
@@ -320,8 +322,8 @@ private struct LevelMeterView: View {
             ForEach(0..<maxBars, id: \.self) { index in
                 RoundedRectangle(cornerRadius: 2)
                     .frame(width: 6, height: 6)
-                    .foregroundStyle(index < activeBars ? .primary : .secondary)
-                    .opacity(index < activeBars ? 0.9 : 0.3)
+                    .foregroundStyle(index < activeBars ? Theme.Colors.accent : Theme.Colors.textTertiary)
+                    .opacity(index < activeBars ? 0.9 : 0.35)
             }
         }
         .animation(.easeOut(duration: 0.12), value: activeBars)

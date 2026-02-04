@@ -62,6 +62,11 @@ import Testing
     ])
 }
 
+@Test func popoverView_layoutConstants_defineCardSpacingAndWidth() async throws {
+    #expect(PopoverView.cardSpacing == 12)
+    #expect(PopoverView.contentWidth == 320)
+}
+
 @Test func popoverView_levelBarCount_clampsAndScales() async throws {
     #expect(PopoverView.levelBarCount(level: -0.2, maxBars: 12) == 0)
     #expect(PopoverView.levelBarCount(level: 0, maxBars: 12) == 0)
