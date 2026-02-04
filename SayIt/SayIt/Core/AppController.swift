@@ -18,6 +18,8 @@ final class AppController: ObservableObject {
     private let settingsWindowController: SettingsWindowControlling
     private let hotkeyManager: HotkeyManaging
     private let settingsUserDefaults: UserDefaults
+    private let modelManager: ModelManager
+    private let modelDownloader: ModelDownloader
     private var cancellables: Set<AnyCancellable> = []
     private let languageKey = "transcriptionLanguage"
     private var hotkeyCancellable: AnyCancellable?
@@ -32,7 +34,9 @@ final class AppController: ObservableObject {
         settingsWindowController: SettingsWindowControlling = SettingsWindowController(),
         hotkeyManager: HotkeyManaging = HotkeyManager(),
         settingsUserDefaults: UserDefaults = .standard,
-        autoRequestPermissions: Bool = true
+        autoRequestPermissions: Bool = true,
+        modelManager: ModelManager = ModelManager(),
+        modelDownloader: ModelDownloader = ModelDownloader()
     ) {
         self.permissionManager = permissionManager
         self.audioDeviceManager = audioDeviceManager
@@ -43,6 +47,8 @@ final class AppController: ObservableObject {
         self.settingsWindowController = settingsWindowController
         self.hotkeyManager = hotkeyManager
         self.settingsUserDefaults = settingsUserDefaults
+        self.modelManager = modelManager
+        self.modelDownloader = modelDownloader
         self.micDevices = audioDeviceManager.devices
         self.selectedMicID = audioDeviceManager.selectedDeviceID
         audioDeviceManager.$devices
@@ -170,6 +176,11 @@ final class AppController: ObservableObject {
                 settingsWindowController.show()
             }
         }
+    }
+
+    func cancelModelDownload() {
+        modelDownloader.cancel()
+        state.modelStatus = .idle
     }
 
     func setHUDAnchorWindow(_ window: NSWindow?) {
