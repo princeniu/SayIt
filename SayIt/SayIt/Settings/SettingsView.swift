@@ -1,7 +1,8 @@
 import SwiftUI
 
+@MainActor
 struct SettingsView: View {
-    @State private var launchAtLogin = false
+    @StateObject private var viewModel = SettingsViewModel()
     @State private var crashReportingEnabled = true
     @State private var showHotkeySheet = false
     @AppStorage("hotkeyDisplay") private var hotkeyDisplay = Hotkey.defaultValue.display
@@ -10,7 +11,13 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Toggle("Launch at login", isOn: $launchAtLogin)
+            Toggle(
+                "Launch at login",
+                isOn: Binding(
+                    get: { viewModel.launchAtLoginEnabled },
+                    set: { viewModel.setLaunchAtLoginEnabled($0) }
+                )
+            )
             HStack {
                 Text("Global hotkey")
                 Spacer()

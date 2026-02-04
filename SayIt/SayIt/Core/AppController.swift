@@ -166,7 +166,9 @@ final class AppController: ObservableObject {
         case .openSettings:
             permissionManager.openSystemSettings()
         case .openSettingsWindow:
-            settingsWindowController.show()
+            Task { @MainActor in
+                settingsWindowController.show()
+            }
         }
     }
 

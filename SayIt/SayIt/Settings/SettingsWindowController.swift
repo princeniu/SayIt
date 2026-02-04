@@ -2,13 +2,13 @@ import AppKit
 import SwiftUI
 
 protocol SettingsWindowControlling {
-    func show()
+    @MainActor func show()
 }
 
 final class SettingsWindowController: SettingsWindowControlling {
     private var window: NSWindow?
 
-    func show() {
+    @MainActor func show() {
         if let window {
             window.makeKeyAndOrderFront(nil)
             return
