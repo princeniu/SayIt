@@ -19,13 +19,16 @@
 - Popover: non-activating; HUD used for transient “Copied” events and triggers in-popover blur.
 - State machine: Idle/Recording/Transcribing/Error; `isSlow` only UI hint, not error.
 - Error UX: primary button always “Start Recording”; error actions are secondary.
-- Permissions: request mic + speech once on first launch.
+- Permissions: request mic + speech once on first launch; recording is gated until permissions are granted.
 - Storage: no audio saved; no history in MVP.
-- Settings: login item + global hotkey included.
+- Settings: login item + global hotkey included; hotkey validation prevents system conflicts.
 - Menu bar icon: light status indication for Recording/Transcribing.
 - Feedback UX: recording time shown below button; download/transcribing feedback in a separate card; copied uses HUD.
-- Global hotkey: Carbon RegisterEventHotKey for reliability; default ⌥Z; user can rebind.
+- Global hotkey: Carbon RegisterEventHotKey for reliability; default ⌥Z; user can rebind; validation prevents reserved shortcuts.
 - Audio level: system-like dot indicator; only visible during recording; placed under recording duration.
+- Device resilience: automatic fallback to default device on disconnect; user notification via HUD.
+- Latency hints: "Taking longer than usual…" message after 3 seconds of transcription.
+- Debug logging: optional verbose console output for troubleshooting; disabled by default.
 
 ## Architecture
 ### High-Level Modules
@@ -46,18 +49,26 @@
 
 ## State Machine
 - **Idle**
-  - Start Recording → Recording (after permissions ok)
+  - Start Recording → Check permissions first
+    - If permissions denied → Error(permissionDenied) with phaseDetail=needsPermissions
+    - If permissions ok → Recording
 - **Recording**
   - Stop & Transcribe → Finalize audio → Transcribing
   - Cancel → Idle (discard buffer)
   - Device disconnect → Error(deviceDisconnectedDuringRecording)
 - **Transcribing**
-  - Slow path → `isSlow = true` (UI “Still working…”)
-- Success → clipboard write → HUD “Copied” → Popover blur → Idle
+  - After 3 seconds → `isSlow = true` (UI "Taking longer than usual…")
+  - Success → clipboard write → HUD "Copied" → Popover blur → Idle
   - Failure → Error(transcriptionFailed)
 - **Error**
   - Primary: Start Recording (if recoverable)
   - Secondary: Open System Settings / Retry Transcribe (if applicable)
+
+## Device Handling
+- **Device Selection**: User can select microphone from dropdown; selection persists.
+- **Device Disconnect (Idle)**: Automatic fallback to default device; HUD notification.
+- **Device Disconnect (Recording)**: Stop recording; show error; allow restart.
+- **Device Reconnect**: Device reappears in list; user can manually reselect.
 
 ## UI/UX (Popover)
 - **Status Row**: `State` + `Reason` (single line)
@@ -72,13 +83,23 @@
 
 ## User Feedback (Smooth & Consistent)
 - **Recording Duration**: show `MM:SS` below the primary button, updating every second.
-- **Transcribing**: show “Transcribing…” below the primary button; after 5s show “Still working…”.
-- **Copied**: show HUD/Toast “Copied ✓” (no focus steal); popover blurs + locks interactions until it clears.
+- **Transcribing**: show "Transcribing…" below the primary button; after 3s show "Taking longer than usual…".
+- **Copied**: show HUD/Toast "Copied ✓" (no focus steal); popover blurs + locks interactions until it clears.
+- **Model Download**: show progress percentage and allow cancel; show "Ready" on completion.
+- **Device Fallback**: show HUD notification when device disconnects and fallback occurs.
+- **Permissions**: show clear message with "Open System Settings" button when denied.
+
 
 ## Settings
-- Login item (auto start)
-- Global hotkey (editable, default ⌥Z)
-- Crash reporting toggle
+- **Login item** (auto start)
+- **Global hotkey** (editable, default ⌥Z)
+  - Validation prevents system reserved shortcuts (Cmd+Q, Cmd+W, etc.)
+  - Error message shown for conflicts
+- **Whisper Model** (Tiny/Base/Small selection)
+  - Download progress and status shown inline
+- **Crash reporting** toggle
+- **Developer section**:
+  - Debug logging toggle (enables verbose console output)
 
 ## Non-goals (MVP)
 - No push-to-talk
