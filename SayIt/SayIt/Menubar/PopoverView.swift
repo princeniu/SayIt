@@ -126,7 +126,8 @@ struct PopoverView: View {
             && downloadStatusState == .hidden
         let isBlurred = Self.shouldBlur(for: appController.state.phaseDetail)
         VStack(alignment: .leading, spacing: Self.cardSpacing) {
-            ForEach(Self.sectionOrderLayout(for: appController.state.mode), id: \.self) { section in
+            let layout = Self.sectionOrderLayout(for: appController.state.mode)
+            ForEach(layout, id: \.self) { section in
                 switch section {
                 case .settings:
                     settingsSection.popoverCard()
@@ -171,7 +172,8 @@ struct PopoverView: View {
     @ViewBuilder
     private var settingsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            ForEach(Self.settingsSectionOrderLayout(), id: \.self) { row in
+            let layout = Self.settingsSectionOrderLayout()
+            ForEach(layout, id: \.self) { row in
                 switch row {
                 case .settingsButton:
                     settingsButtonRow
@@ -291,37 +293,43 @@ struct PopoverView: View {
 
     @ViewBuilder
     private func statusSection(showDownloadPrompt: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .center, spacing: 8) {
             // Priority 1: Permissions / Fallback
             if appController.state.phaseDetail == .needsPermissions {
                 VStack(spacing: 6) {
                     Text("Microphone and speech permissions required")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.textSecondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, alignment: .center)
                     Button("Open System Settings") {
                         appController.send(.openSettings)
                     }
                     .buttonStyle(.link)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .accessibilityHint("Opens macOS System Settings")
                 }
             } else if appController.state.phaseDetail == .deviceFallback {
                 Text("Input device disconnected. Switched to default.")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.textSecondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
             } else {
                  // Priority 2: Standard Status
                  if !viewModel.primaryStatusText.isEmpty {
                      Text(viewModel.primaryStatusText)
                          .font(.caption)
                          .foregroundStyle(Theme.Colors.textPrimary)
+                         .multilineTextAlignment(.center)
+                         .frame(maxWidth: .infinity, alignment: .center)
                  }
                  if let secondary = viewModel.secondaryStatusText {
                      Text(secondary)
                          .font(.caption)
                          .foregroundStyle(Theme.Colors.textSecondary)
+                         .multilineTextAlignment(.center)
+                         .frame(maxWidth: .infinity, alignment: .center)
                  }
             }
             
@@ -338,12 +346,13 @@ struct PopoverView: View {
                 Text("Whisper model required")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.textSecondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 Button("Download Model") {
                     appController.startModelDownload()
                 }
                 .buttonStyle(.link)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
         case .progress(let progress):
             ProgressView(value: progress)
@@ -355,12 +364,13 @@ struct PopoverView: View {
                 Text(message)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.error)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 Button("Retry") {
                     appController.startModelDownload()
                 }
                 .buttonStyle(.link)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
         case .hidden:
             EmptyView()
