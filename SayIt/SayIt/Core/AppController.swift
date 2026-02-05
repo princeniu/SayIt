@@ -22,6 +22,7 @@ final class AppController: ObservableObject {
     private let settingsUserDefaults: UserDefaults
     private let modelManager: ModelManager
     private let modelDownloader: ModelDownloader
+    private let hudDisplayDuration: TimeInterval
     private var cancellables: Set<AnyCancellable> = []
     private let languageKey = "transcriptionLanguage"
     private let engineKey = "transcriptionEngine"
@@ -43,7 +44,8 @@ final class AppController: ObservableObject {
         settingsUserDefaults: UserDefaults = .standard,
         autoRequestPermissions: Bool = true,
         modelManager: ModelManager = ModelManager(),
-        modelDownloader: ModelDownloader = ModelDownloader()
+        modelDownloader: ModelDownloader = ModelDownloader(),
+        hudDisplayDuration: TimeInterval = 1.5
     ) {
         self.permissionManager = permissionManager
         self.audioDeviceManager = audioDeviceManager
@@ -56,6 +58,7 @@ final class AppController: ObservableObject {
         self.settingsUserDefaults = settingsUserDefaults
         self.modelManager = modelManager
         self.modelDownloader = modelDownloader
+        self.hudDisplayDuration = hudDisplayDuration
         self.selectedEngine = TranscriptionEngineType(rawValue: settingsUserDefaults.string(forKey: engineKey) ?? "") ?? .system
         self.micDevices = audioDeviceManager.devices
         self.selectedMicID = audioDeviceManager.selectedDeviceID
@@ -155,9 +158,15 @@ final class AppController: ObservableObject {
                         _ = self.clipboardManager.write(text)
                         self.hudManager.showCopied()
                         self.state.mode = .idle
-                        self.state.phaseDetail = nil
+                        self.state.phaseDetail = .copied
                         self.state.transcribingStartedAt = nil
                         self.state.audioLevel = 0
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + self.hudDisplayDuration) { [weak self] in
+                        guard let self else { return }
+                        if self.state.phaseDetail == .copied {
+                            self.state.phaseDetail = nil
+                        }
                     }
                 } catch {
                     print("SayIt: transcription failed: \(error)")

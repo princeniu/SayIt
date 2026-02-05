@@ -113,6 +113,10 @@ struct PopoverView: View {
         }
     }
 
+    static func shouldBlur(for phaseDetail: PhaseDetail?) -> Bool {
+        phaseDetail == .copied
+    }
+
     static func primaryButtonStyle(for mode: AppMode) -> PrimaryButtonStyle {
         switch mode {
         case .idle, .error:
@@ -165,6 +169,7 @@ struct PopoverView: View {
             downloadState: downloadStatusState,
             showDownloadPrompt: showDownloadPrompt
         )
+        let isBlurred = Self.shouldBlur(for: appController.state.phaseDetail)
         VStack(alignment: .leading, spacing: Self.cardSpacing) {
             ForEach(Self.sectionOrderLayout(for: appController.state.mode, includeFeedback: includeFeedback), id: \.self) { section in
                 switch section {
@@ -183,6 +188,16 @@ struct PopoverView: View {
         .padding(16)
         .frame(width: Self.contentWidth)
         .background(Theme.Colors.base)
+        .blur(radius: isBlurred ? 6 : 0)
+        .overlay(
+            Group {
+                if isBlurred {
+                    Theme.Colors.base.opacity(0.35)
+                }
+            }
+        )
+        .allowsHitTesting(!isBlurred)
+        .animation(.easeInOut(duration: Theme.Motion.standard), value: isBlurred)
     }
 
     @ViewBuilder

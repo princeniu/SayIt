@@ -89,6 +89,12 @@ import Testing
     #expect(PopoverView.primaryButtonStyle(for: .transcribing(isSlow: false)) == .transcribing)
 }
 
+@Test func popoverView_shouldBlurWhenCopiedPhase() async throws {
+    #expect(PopoverView.shouldBlur(for: .copied) == true)
+    #expect(PopoverView.shouldBlur(for: .recording) == false)
+    #expect(PopoverView.shouldBlur(for: nil) == false)
+}
+
 @Test func popoverView_feedbackVisibility_rules() async throws {
     #expect(PopoverView.shouldShowFeedback(for: .transcribing(isSlow: false), downloadState: .hidden, showDownloadPrompt: false) == true)
     #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .progress(0.2), showDownloadPrompt: false) == true)

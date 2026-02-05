@@ -125,6 +125,44 @@ import Testing
     #expect(controller.state.transcribingStartedAt != nil)
 }
 
+@Test func stopAndTranscribe_setsCopiedPhaseThenClears() async throws {
+    let suiteName = "AppControllerTests.stopAndTranscribe_setsCopiedPhaseThenClears"
+    let suite = UserDefaults(suiteName: suiteName) ?? .standard
+    suite.removePersistentDomain(forName: suiteName)
+    suite.set(TranscriptionEngineType.system.rawValue, forKey: "transcriptionEngine")
+    let audioCaptureEngine = TestAudioCaptureEngine()
+    let transcriptionEngine = TestTranscriptionEngine(result: "hello")
+    let permissionManager = PermissionManager(
+        micStatus: .authorized,
+        speechStatus: .authorized,
+        userDefaults: suite,
+        useSystemStatus: false
+    )
+    let controller = AppController(
+        permissionManager: permissionManager,
+        audioDeviceManager: AudioDeviceManager(startMonitoring: false),
+        audioCaptureEngine: audioCaptureEngine,
+        transcriptionEngine: transcriptionEngine,
+        settingsUserDefaults: suite,
+        autoRequestPermissions: false,
+        hudDisplayDuration: 0.1
+    )
+
+    controller.send(.startRecording)
+    controller.send(.stopAndTranscribe)
+
+    for _ in 0..<50 {
+        if controller.state.mode == .idle {
+            break
+        }
+        try await Task.sleep(nanoseconds: 20_000_000)
+    }
+
+    #expect(controller.state.phaseDetail == .copied)
+    try await Task.sleep(nanoseconds: 200_000_000)
+    #expect(controller.state.phaseDetail == nil)
+}
+
 @Test func startRecording_usesSelectedDevice() async throws {
     let suite = UserDefaults(suiteName: "AppControllerTests")
     suite?.removePersistentDomain(forName: "AppControllerTests")
