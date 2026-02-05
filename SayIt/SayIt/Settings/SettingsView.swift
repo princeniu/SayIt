@@ -45,6 +45,25 @@ struct SettingsView: View {
                 Toggle("", isOn: $crashReportingEnabled)
                     .labelsHidden()
             }
+            
+            Divider()
+                .background(Theme.Colors.textSecondary.opacity(0.2))
+                .padding(.vertical, 4)
+            
+            Text("Developer")
+                .font(.caption)
+                .foregroundColor(Theme.Colors.textSecondary)
+                .padding(.bottom, 4)
+            
+            settingsRow(title: "Debug logging") {
+                VStack(alignment: .trailing, spacing: 2) {
+                    Toggle("", isOn: $viewModel.debugLoggingEnabled)
+                        .labelsHidden()
+                    Text("Enable verbose console output")
+                        .font(.caption2)
+                        .foregroundColor(Theme.Colors.textSecondary)
+                }
+            }
         }
         .padding(Self.cardPadding)
         .frame(width: Self.cardWidth)

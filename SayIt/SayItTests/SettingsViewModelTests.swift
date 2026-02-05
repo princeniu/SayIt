@@ -52,3 +52,23 @@ final class TestLaunchAtLoginManager: LaunchAtLoginManaging {
     )
     #expect(viewModel.validateHotkey(validHotkey) == nil)
 }
+
+@MainActor @Test func debugLoggingToggle_persistsAndControlsLogging() async throws {
+    let suiteName = "SettingsViewModelTests.debugLoggingToggle"
+    let suite = UserDefaults(suiteName: suiteName) ?? .standard
+    suite.removePersistentDomain(forName: suiteName)
+    
+    let viewModel = SettingsViewModel(settingsUserDefaults: suite)
+    
+    // Initially false
+    #expect(viewModel.debugLoggingEnabled == false)
+    #expect(suite.bool(forKey: "debugLoggingEnabled") == false)
+    
+    // Toggle on
+    viewModel.debugLoggingEnabled = true
+    #expect(suite.bool(forKey: "debugLoggingEnabled") == true)
+    
+    // Toggle off
+    viewModel.debugLoggingEnabled = false
+    #expect(suite.bool(forKey: "debugLoggingEnabled") == false)
+}

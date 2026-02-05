@@ -103,6 +103,16 @@ final class AppController: ObservableObject {
                 self?.registerHotkey()
             }
     }
+    
+    private var debugLoggingEnabled: Bool {
+        settingsUserDefaults.bool(forKey: "debugLoggingEnabled")
+    }
+    
+    private func debugLog(_ message: String) {
+        if debugLoggingEnabled {
+            print("SayIt: \(message)")
+        }
+    }
 
     func send(_ intent: AppIntent) {
         switch intent {
@@ -118,7 +128,7 @@ final class AppController: ObservableObject {
                 }
                 return
             }
-            print("SayIt: startRecording requested. selectedMicID=\(String(describing: audioDeviceManager.selectedDeviceID)) name=\(selectedMicName)")
+            debugLog("startRecording requested. selectedMicID=\(String(describing: audioDeviceManager.selectedDeviceID)) name=\(selectedMicName)")
             do {
                 state.phaseDetail = .connecting
                 state.recordingStartedAt = nil
@@ -127,7 +137,7 @@ final class AppController: ObservableObject {
                 audioCaptureEngine.onFirstBuffer = { [weak self] in
                     guard let self else { return }
                     if self.state.mode == .recording {
-                        print("SayIt: first audio buffer received. recordingStartAt set.")
+                        debugLog("first audio buffer received. recordingStartAt set.")
                         self.state.phaseDetail = .recording
                         self.state.recordingStartedAt = Date()
                     }
@@ -147,7 +157,7 @@ final class AppController: ObservableObject {
             }
         case .stopAndTranscribe:
             guard case .recording = state.mode else { return }
-            print("SayIt: stopAndTranscribe requested.")
+            debugLog("stopAndTranscribe requested.")
             state.mode = .transcribing(isSlow: false)
             state.phaseDetail = .transcribing
             state.transcribingStartedAt = Date()
@@ -170,7 +180,7 @@ final class AppController: ObservableObject {
                     let buffer: AVAudioPCMBuffer
                     do {
                         buffer = try self.audioCaptureEngine.stopAndFinalize()
-                        print("SayIt: audioCaptureEngine.stopAndFinalize succeeded. frames=\(buffer.frameLength)")
+                        debugLog("audioCaptureEngine.stopAndFinalize succeeded. frames=\(buffer.frameLength)")
                     } catch {
                         print("SayIt: audioCaptureEngine.stopAndFinalize failed: \(error)")
                         slowHintTask.cancel()
@@ -184,11 +194,11 @@ final class AppController: ObservableObject {
                     }
                     let engine = self.transcriptionEngineForCurrentSelection()
                     let locale = self.transcriptionLocaleForCurrentEngine()
-                    print("SayIt: transcribing with engine=\(self.selectedEngine.rawValue) locale=\(locale.identifier)")
+                    debugLog("transcribing with engine=\(self.selectedEngine.rawValue) locale=\(locale.identifier)")
                     let text = try await engine.transcribe(buffer: buffer, locale: locale)
                     slowHintTask.cancel()
                     await MainActor.run {
-                        print("SayIt: transcription succeeded. textLength=\(text.count)")
+                        debugLog("transcription succeeded. textLength=\(text.count)")
                         _ = self.clipboardManager.write(text)
                         self.hudManager.showCopied()
                         self.state.mode = .idle
@@ -248,7 +258,7 @@ final class AppController: ObservableObject {
     func setEngine(_ engine: TranscriptionEngineType) {
         selectedEngine = engine
         settingsUserDefaults.set(engine.rawValue, forKey: engineKey)
-        print("SayIt: engine changed to \(engine.rawValue)")
+        debugLog("engine changed to \(engine.rawValue)")
         refreshModelStatus()
     }
 
