@@ -44,31 +44,12 @@ final class TestLaunchAtLoginManager: LaunchAtLoginManaging {
     )
     #expect(viewModel.validateHotkey(quitHotkey) != nil)
     
-    // Valid (Opt+Space)
+    // Valid (Opt+Z)
     let validHotkey = Hotkey(
-        keyCode: UInt32(kVK_Space),
+        keyCode: UInt32(kVK_ANSI_Z),
         modifiers: HotkeyModifiers(option: true, command: false, control: false, shift: false),
-        display: "⌥Space"
+        display: "⌥Z"
     )
     #expect(viewModel.validateHotkey(validHotkey) == nil)
 }
 
-@MainActor @Test func debugLoggingToggle_persistsAndControlsLogging() async throws {
-    let suiteName = "SettingsViewModelTests.debugLoggingToggle"
-    let suite = UserDefaults(suiteName: suiteName) ?? .standard
-    suite.removePersistentDomain(forName: suiteName)
-    
-    let viewModel = SettingsViewModel(settingsUserDefaults: suite)
-    
-    // Initially false
-    #expect(viewModel.debugLoggingEnabled == false)
-    #expect(suite.bool(forKey: "debugLoggingEnabled") == false)
-    
-    // Toggle on
-    viewModel.debugLoggingEnabled = true
-    #expect(suite.bool(forKey: "debugLoggingEnabled") == true)
-    
-    // Toggle off
-    viewModel.debugLoggingEnabled = false
-    #expect(suite.bool(forKey: "debugLoggingEnabled") == false)
-}

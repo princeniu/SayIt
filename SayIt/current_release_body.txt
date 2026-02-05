@@ -1,0 +1,17 @@
+### 🎉 SayIt 1.0.0 Official Release
+
+We are excited to announce the first official release of **SayIt**, your powerful local voice-to-text companion for macOS.
+
+#### ✨ Key Features:
+- **Local Transcription**: Powered by OpenAI's Whisper (via whisper.cpp) for privacy and speed.
+- **Dual Engine Architecture**: Seamlessly switch between Apple Speech and Whisper.
+- **Global Hotkey**: Record anywhere with a customizable hotkey.
+- **Premium UI**: Beautiful, minimalist menu bar interface designed for productivity.
+- **Auto-Update Ready**: Integration with Sparkle for future improvements.
+
+#### 📦 Installation:
+1. Download .
+2. Open the DMG and drag **SayIt** to your **Applications** folder.
+3. Open SayIt and follow the permission prompts.
+
+*Built with ❤️ by Prince Niu*
