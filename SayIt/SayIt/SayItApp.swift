@@ -19,6 +19,7 @@ struct SayItApp: App {
     }
 }
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
 
@@ -27,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             || NSClassFromString("XCTestCase") != nil {
             return
         }
-        menuBarController = MenuBarController()
+        let appController = AppController()
+        menuBarController = MenuBarController(appController: appController)
     }
 }

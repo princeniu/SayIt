@@ -13,8 +13,13 @@ DMG_NAME="${PROJECT_NAME}_v1.0.0.dmg"
 
 echo "🚀 Starting productization build..."
 
+# 0. Deep clean extended attributes (fixes "detritus" errors)
+echo "🧹 Cleaning extended attributes..."
+xattr -rc .
+dot_clean .
+
 # 1. Clean previous builds
-echo "🧹 Cleaning previous builds..."
+echo "🧹 Removing previous build artifacts..."
 rm -rf "${BUILD_DIR}"
 mkdir -p "${BUILD_DIR}"
 
@@ -23,17 +28,23 @@ CODE_SIGN_ENTITLEMENTS="${PROJECT_NAME}/${PROJECT_NAME}.entitlements"
 CODESIGN_IDENTITY="Developer ID Application: Zhuo Niu (V7Z2QYFJWN)"
 
 echo "🏗 Building ${PROJECT_NAME} for Release..."
+# We disable code signing during xcodebuild to avoid "detritus" errors
+# and handle it manually in the next step.
 xcodebuild -project "${PROJECT_NAME}.xcodeproj" \
     -scheme "${SCHEME_NAME}" \
     -configuration Release \
     -derivedDataPath "${BUILD_DIR}/DerivedData" \
     SYMROOT="$(pwd)/${BUILD_DIR}" \
-    CODE_SIGN_ENTITLEMENTS="${CODE_SIGN_ENTITLEMENTS}" \
+    CODE_SIGNING_ALLOWED=NO \
     build
 
 # 2.5 Code Sign the app bundle
 if [ -n "${CODESIGN_IDENTITY}" ]; then
+    echo "🧹 Final detritus cleanup on built app..."
+    xattr -rc "${RELEASE_DIR}/${PROJECT_NAME}.app"
+    
     echo "🔑 Signing app with identity: ${CODESIGN_IDENTITY}"
+    # Use --options runtime for Hardened Runtime (required for notarization)
     codesign --force --options runtime --deep --sign "${CODESIGN_IDENTITY}" \
         --entitlements "${CODE_SIGN_ENTITLEMENTS}" \
         "${RELEASE_DIR}/${PROJECT_NAME}.app"

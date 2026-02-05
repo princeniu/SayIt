@@ -11,16 +11,10 @@ final class SettingsViewModel: ObservableObject {
         }
     }
     @Published var modelStatus: ModelStatus = .idle
-    @Published var debugLoggingEnabled: Bool {
-        didSet {
-            settingsUserDefaults.set(debugLoggingEnabled, forKey: debugLoggingKey)
-        }
-    }
 
     private let launchAtLoginManager: LaunchAtLoginManaging
     private let settingsUserDefaults: UserDefaults
     private let preferredModelKey = "whisperPreferredModel"
-    private let debugLoggingKey = "debugLoggingEnabled"
 
     init(
         launchAtLoginManager: LaunchAtLoginManaging = LaunchAtLoginManager(),
@@ -31,7 +25,6 @@ final class SettingsViewModel: ObservableObject {
         self.launchAtLoginEnabled = launchAtLoginManager.isEnabled
         let rawValue = settingsUserDefaults.string(forKey: preferredModelKey) ?? WhisperModelType.small.rawValue
         self.preferredModel = WhisperModelType(rawValue: rawValue) ?? .small
-        self.debugLoggingEnabled = settingsUserDefaults.bool(forKey: debugLoggingKey)
     }
 
     func setLaunchAtLoginEnabled(_ enabled: Bool) {

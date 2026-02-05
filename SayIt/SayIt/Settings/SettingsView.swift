@@ -28,17 +28,18 @@ struct SettingsView: View {
                 .labelsHidden()
             }
             settingsRow(title: "Whisper Model") {
-                VStack(alignment: .trailing, spacing: 6) {
+                HStack(spacing: 12) {
+                    modelStatusView(status: appController.state.modelStatus)
+                    
                     Picker("", selection: $viewModel.preferredModel) {
                         ForEach(WhisperModelType.allCases, id: \.self) { model in
                             Text(model.rawValue.capitalized).tag(model)
                         }
                     }
-                    .onChange(of: viewModel.preferredModel) { _ in
+                    .onChange(of: viewModel.preferredModel) {
                         appController.checkModelStatus()
                     }
-                    
-                    modelStatusView(status: appController.state.modelStatus)
+                    .frame(width: 100)
                 }
             }
             settingsRow(title: "Crash reporting") {
@@ -46,25 +47,6 @@ struct SettingsView: View {
                     .labelsHidden()
             }
             
-            Divider()
-                .background(Theme.Colors.textSecondary.opacity(0.2))
-                .padding(.vertical, 4)
-            
-            Text("Developer")
-                .font(.caption)
-                .foregroundColor(Theme.Colors.textSecondary)
-                .padding(.bottom, 4)
-            
-            settingsRow(title: "Debug logging") {
-                VStack(alignment: .trailing, spacing: 2) {
-                    Toggle("", isOn: $viewModel.debugLoggingEnabled)
-                        .labelsHidden()
-                    Text("Enable verbose console output")
-                        .font(.caption2)
-                        .foregroundColor(Theme.Colors.textSecondary)
-                }
-            }
-
             Divider()
                 .background(Theme.Colors.textSecondary.opacity(0.2))
                 .padding(.vertical, 4)

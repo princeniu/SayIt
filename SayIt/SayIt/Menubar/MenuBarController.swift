@@ -9,7 +9,7 @@ final class MenuBarController {
     private let appController: AppController
     private var cancellables = Set<AnyCancellable>()
 
-    init(appController: AppController = AppController()) {
+    init(appController: AppController) {
         self.appController = appController
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         self.popover = NSPopover()

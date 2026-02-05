@@ -203,6 +203,9 @@
 			);
 			mainGroup = A335B35F2F31A500009D0F31;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A3A30C672F3471570088C61B /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A335B3692F31A500009D0F31 /* Products */;
 			projectDirPath = "";
@@ -413,6 +416,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				SUFeedURL = "https://raw.githubusercontent.com/princeniu/SayIt/main/appcast.xml";
+				SUPublicEDKey = "e/ykxjFav0N7bSKLhXw9LBnsDsVeAqG3ljIlrzTqA/I=";
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
@@ -643,6 +648,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A3A30C672F3471570088C61B /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = A335B3602F31A500009D0F31 /* Project object */;
 }
