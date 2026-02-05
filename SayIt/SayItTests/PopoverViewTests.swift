@@ -96,10 +96,11 @@ import Testing
 }
 
 @Test func popoverView_feedbackVisibility_rules() async throws {
-    #expect(PopoverView.shouldShowFeedback(for: .transcribing(isSlow: false), downloadState: .hidden, showDownloadPrompt: false) == true)
-    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .progress(0.2), showDownloadPrompt: false) == true)
-    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .hidden, showDownloadPrompt: true) == true)
-    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .hidden, showDownloadPrompt: false) == false)
+    #expect(PopoverView.shouldShowFeedback(for: .transcribing(isSlow: false), downloadState: .hidden, showDownloadPrompt: false, phaseDetail: nil) == true)
+    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .progress(0.2), showDownloadPrompt: false, phaseDetail: nil) == true)
+    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .hidden, showDownloadPrompt: true, phaseDetail: nil) == true)
+    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .hidden, showDownloadPrompt: false, phaseDetail: nil) == false)
+    #expect(PopoverView.shouldShowFeedback(for: .error(.permissionDenied), downloadState: .hidden, showDownloadPrompt: false, phaseDetail: .needsPermissions) == true)
 }
 
 @Test func popoverView_feedbackStatusText_forTranscribing() async throws {

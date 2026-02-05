@@ -90,8 +90,12 @@ struct PopoverView: View {
     static func shouldShowFeedback(
         for mode: AppMode,
         downloadState: DownloadStatusViewState,
-        showDownloadPrompt: Bool
+        showDownloadPrompt: Bool,
+        phaseDetail: PhaseDetail?
     ) -> Bool {
+        if phaseDetail == .needsPermissions {
+            return true
+        }
         if case .transcribing = mode {
             return true
         }
@@ -167,7 +171,8 @@ struct PopoverView: View {
         let includeFeedback = Self.shouldShowFeedback(
             for: appController.state.mode,
             downloadState: downloadStatusState,
-            showDownloadPrompt: showDownloadPrompt
+            showDownloadPrompt: showDownloadPrompt,
+            phaseDetail: appController.state.phaseDetail
         )
         let isBlurred = Self.shouldBlur(for: appController.state.phaseDetail)
         VStack(alignment: .leading, spacing: Self.cardSpacing) {
@@ -319,6 +324,19 @@ struct PopoverView: View {
     @ViewBuilder
     private func feedbackSection(showDownloadPrompt: Bool) -> some View {
         VStack(alignment: .leading, spacing: 8) {
+            if appController.state.phaseDetail == .needsPermissions {
+                VStack(spacing: 6) {
+                    Text("Microphone and speech permissions required")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.textSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button("Open System Settings") {
+                        appController.send(.openSettings)
+                    }
+                    .buttonStyle(.link)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
             if let text = Self.feedbackStatusText(for: appController.state.mode) {
                 Text(text)
                     .font(.caption)

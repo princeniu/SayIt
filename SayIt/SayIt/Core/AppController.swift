@@ -93,8 +93,14 @@ final class AppController: ObservableObject {
         switch intent {
         case .startRecording:
             guard permissionManager.isAuthorized else {
-                state.mode = .error(.permissionDenied)
-                state.phaseDetail = nil
+                if permissionManager.isFirstRun {
+                    permissionManager.requestPermissionsIfNeeded()
+                    state.mode = .error(.permissionDenied)
+                    state.phaseDetail = .needsPermissions
+                } else {
+                    state.mode = .error(.permissionDenied)
+                    state.phaseDetail = nil
+                }
                 return
             }
             print("SayIt: startRecording requested. selectedMicID=\(String(describing: audioDeviceManager.selectedDeviceID)) name=\(selectedMicName)")

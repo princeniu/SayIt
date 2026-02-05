@@ -40,6 +40,10 @@ final class PermissionManager: ObservableObject {
         micStatus == .authorized && speechStatus == .authorized
     }
 
+    var isFirstRun: Bool {
+        !userDefaults.bool(forKey: requestKey)
+    }
+
     func requestPermissionsIfNeeded() {
         guard !userDefaults.bool(forKey: requestKey) else { return }
         userDefaults.set(true, forKey: requestKey)

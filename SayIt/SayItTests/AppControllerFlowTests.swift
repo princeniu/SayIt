@@ -60,6 +60,32 @@ final class AppControllerFlowTests: XCTestCase {
         XCTAssertEqual(audioCaptureEngine.lastStartDeviceID, deviceID)
     }
 
+    func test_firstRun_showsPermissionsPromptBeforeRecording() {
+        let suite = UserDefaults(suiteName: "AppControllerFlowTests")
+        suite?.removePersistentDomain(forName: "AppControllerFlowTests")
+        let audioCaptureEngine = TestAudioCaptureEngine()
+        let permissionManager = PermissionManager(
+            micStatus: .unknown,
+            speechStatus: .unknown,
+            userDefaults: suite ?? .standard,
+            useSystemStatus: false
+        )
+        let controller = AppController(
+            permissionManager: permissionManager,
+            audioDeviceManager: AudioDeviceManager(startMonitoring: false),
+            audioCaptureEngine: audioCaptureEngine,
+            transcriptionEngine: TestTranscriptionEngine(),
+            settingsUserDefaults: suite ?? .standard,
+            autoRequestPermissions: false
+        )
+
+        controller.send(.startRecording)
+
+        XCTAssertFalse(audioCaptureEngine.startCalled)
+        XCTAssertEqual(controller.state.mode, .error(.permissionDenied))
+        XCTAssertEqual(controller.state.phaseDetail, .needsPermissions)
+    }
+
     func test_stopAndTranscribe_copiesAndReturnsIdle() async throws {
         let suite = UserDefaults(suiteName: "AppControllerFlowTests")
         suite?.removePersistentDomain(forName: "AppControllerFlowTests")

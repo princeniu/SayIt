@@ -12,6 +12,7 @@ public enum PhaseDetail: Equatable {
     case recording
     case transcribing
     case copied
+    case needsPermissions
 }
 
 public enum ModelStatus: Equatable {
