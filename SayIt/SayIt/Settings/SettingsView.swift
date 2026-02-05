@@ -54,6 +54,7 @@ struct SettingsView: View {
                     .labelsHidden()
             }
             
+            #if !APP_STORE
             Divider()
                 .background(Theme.Colors.textSecondary.opacity(0.2))
                 .padding(.vertical, 4)
@@ -69,6 +70,16 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
+            }
+            #endif
+            
+            Divider()
+                .background(Theme.Colors.textSecondary.opacity(0.2))
+                .padding(.vertical, 4)
+                
+            settingsRow(title: "Privacy Policy") {
+                Link("View Online", destination: URL(string: "https://github.com/princeniu/SayIt/blob/main/docs/privacy-policy.md")!)
+                    .font(.caption)
             }
         }
         .padding(Self.cardPadding)
