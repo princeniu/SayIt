@@ -34,8 +34,13 @@ struct HotkeyRecorderView: NSViewRepresentable {
 struct HotkeyCaptureSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var errorMessage: String?
-
+    let validate: ((Hotkey) -> String?)?
     let onSave: (Hotkey) -> Void
+
+    init(validate: ((Hotkey) -> String?)? = nil, onSave: @escaping (Hotkey) -> Void) {
+        self.validate = validate
+        self.onSave = onSave
+    }
 
     var body: some View {
         VStack(spacing: 12) {
@@ -75,6 +80,12 @@ struct HotkeyCaptureSheet: View {
         }
         let display = modifiers.display + key
         let hotkey = Hotkey(keyCode: UInt32(event.keyCode), modifiers: modifiers, display: display)
+        
+        if let error = validate?(hotkey) {
+            errorMessage = error
+            return
+        }
+        
         onSave(hotkey)
         dismiss()
     }

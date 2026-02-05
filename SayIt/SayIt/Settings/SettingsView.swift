@@ -55,7 +55,7 @@ struct SettingsView: View {
         .cornerRadius(Theme.Radius.card)
         .padding()
         .sheet(isPresented: $showHotkeySheet) {
-            HotkeyCaptureSheet { hotkey in
+            HotkeyCaptureSheet(validate: viewModel.validateHotkey) { hotkey in
                 hotkeyDisplay = hotkey.display
                 hotkeyKeyCode = Int(hotkey.keyCode)
                 hotkeyModifiers = Int(hotkey.modifiers.carbonValue)

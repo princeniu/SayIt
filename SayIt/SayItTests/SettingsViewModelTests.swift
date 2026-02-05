@@ -1,5 +1,6 @@
 import Testing
 @testable import SayIt
+import Carbon
 
 @MainActor @Test func settingsViewModel_initializesFromManager() async throws {
     let manager = TestLaunchAtLoginManager(isEnabled: true)
@@ -30,4 +31,24 @@ final class TestLaunchAtLoginManager: LaunchAtLoginManaging {
         setCalls.append(enabled)
         isEnabled = enabled
     }
+}
+
+@MainActor @Test func settingsViewModel_validatesHotkeys() async throws {
+    let viewModel = SettingsViewModel()
+    
+    // Conflict (Cmd+Q)
+    let quitHotkey = Hotkey(
+        keyCode: UInt32(kVK_ANSI_Q),
+        modifiers: HotkeyModifiers(option: false, command: true, control: false, shift: false),
+        display: "⌘Q"
+    )
+    #expect(viewModel.validateHotkey(quitHotkey) != nil)
+    
+    // Valid (Opt+Space)
+    let validHotkey = Hotkey(
+        keyCode: UInt32(kVK_Space),
+        modifiers: HotkeyModifiers(option: true, command: false, control: false, shift: false),
+        display: "⌥Space"
+    )
+    #expect(viewModel.validateHotkey(validHotkey) == nil)
 }
