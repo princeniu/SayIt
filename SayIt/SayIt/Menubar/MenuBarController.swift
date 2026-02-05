@@ -44,22 +44,25 @@ final class MenuBarController {
     }
 
     private func updateStatusItemIcon(for state: AppState) {
-        let symbolName: String
-        switch state.mode {
-        case .idle:
-            symbolName = "mic"
-        case .recording:
-            symbolName = "mic.fill"
-        case .transcribing:
-            symbolName = "waveform"
-        case .error:
-            symbolName = "mic.slash"
-        }
+        let symbolName = Self.symbolName(for: state.mode)
         statusItem.button?.image = NSImage(
             systemSymbolName: symbolName,
             accessibilityDescription: "SayIt"
         )
         statusItem.button?.image?.isTemplate = true
+    }
+
+    nonisolated static func symbolName(for mode: AppMode) -> String {
+        switch mode {
+        case .idle:
+            return "mic"
+        case .recording:
+            return "mic.circle.fill"
+        case .transcribing:
+            return "waveform.circle.fill"
+        case .error:
+            return "mic.slash"
+        }
     }
 
     @objc private func togglePopover(_ sender: AnyObject?) {
