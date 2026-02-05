@@ -145,6 +145,12 @@ struct PopoverView: View {
                     }
                 }
             }
+
+            Divider()
+                .opacity(0.15)
+                .padding(.top, 4)
+
+            footerSection
         }
         .padding(16)
         .frame(width: Self.contentWidth)
@@ -428,6 +434,29 @@ struct PopoverView: View {
         case .transcribing:
             break
         }
+    }
+
+    @ViewBuilder
+    private var footerSection: some View {
+        VStack(spacing: 4) {
+            HStack {
+                Text("SayIt v1.0.0")
+                Spacer()
+                Text("© 2026 Prince Niu")
+            }
+            .font(.system(size: 9, weight: .medium))
+            .foregroundStyle(Theme.Colors.textTertiary)
+
+            HStack(spacing: 4) {
+                Text("Powered by")
+                Link("whisper.cpp", destination: URL(string: "https://github.com/ggerganov/whisper.cpp")!)
+                    .underline()
+            }
+            .font(.system(size: 9))
+            .foregroundStyle(Theme.Colors.textTertiary.opacity(0.8))
+        }
+        .padding(.top, 4)
+        .padding(.horizontal, 4)
     }
 }
 

@@ -22,6 +22,7 @@ final class AppController: ObservableObject {
     private let settingsUserDefaults: UserDefaults
     private let modelManager: ModelManager
     private let modelDownloader: ModelDownloader
+    private let updater = Updater()
     private let hudDisplayDuration: TimeInterval
     private var cancellables: Set<AnyCancellable> = []
     private let languageKey = "transcriptionLanguage"
@@ -241,6 +242,10 @@ final class AppController: ObservableObject {
                 settingsWindowController.show(appController: self)
             }
         }
+    }
+
+    func checkForUpdates() {
+        updater.checkForUpdates()
     }
 
     func cancelModelDownload() {

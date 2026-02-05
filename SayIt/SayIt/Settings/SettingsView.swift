@@ -64,6 +64,23 @@ struct SettingsView: View {
                         .foregroundColor(Theme.Colors.textSecondary)
                 }
             }
+
+            Divider()
+                .background(Theme.Colors.textSecondary.opacity(0.2))
+                .padding(.vertical, 4)
+
+            Text("Updates")
+                .font(.caption)
+                .foregroundColor(Theme.Colors.textSecondary)
+                .padding(.bottom, 4)
+
+            settingsRow(title: "Check for Updates") {
+                Button("Check…") {
+                    appController.checkForUpdates()
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
         }
         .padding(Self.cardPadding)
         .frame(width: Self.cardWidth)

@@ -1,0 +1,171 @@
+{
+  "" : {
+    "const-values" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayIt-primary.swiftconstvalues",
+    "dependencies" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayIt-primary.d",
+    "diagnostics" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayIt-primary.dia",
+    "emit-module-dependencies" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayIt-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayIt-primary-emit-module.dia",
+    "pch" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayIt-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayIt-primary.swiftdeps"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Audio/AudioCaptureEngine.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AudioCaptureEngine.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AudioCaptureEngine.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AudioCaptureEngine.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Audio/AudioDeviceManager.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AudioDeviceManager.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AudioDeviceManager.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AudioDeviceManager.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/ContentView.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/AppController.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppController.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppController.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppController.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/AppIntent.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppIntent.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppIntent.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppIntent.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/AppState.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppState.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppState.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppState.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/ClipboardManager.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ClipboardManager.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ClipboardManager.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ClipboardManager.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/HUDManager.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HUDManager.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HUDManager.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HUDManager.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/Hotkey.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/Hotkey.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/Hotkey.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/Hotkey.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/HotkeyManager.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HotkeyManager.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HotkeyManager.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HotkeyManager.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/LaunchAtLoginManager.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/LaunchAtLoginManager.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/LaunchAtLoginManager.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/LaunchAtLoginManager.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/ModelDownloader.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ModelDownloader.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ModelDownloader.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ModelDownloader.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/ModelManager.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ModelManager.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ModelManager.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/ModelManager.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/TranscriptionEngineType.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/TranscriptionEngineType.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/TranscriptionEngineType.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/TranscriptionEngineType.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Core/WhisperModel.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperModel.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperModel.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperModel.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Menubar/DownloadStatusViewModel.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/DownloadStatusViewModel.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/DownloadStatusViewModel.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/DownloadStatusViewModel.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Menubar/MenuBarController.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/MenuBarController.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/MenuBarController.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/MenuBarController.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Menubar/PopoverView.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverView.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverView.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverView.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Menubar/PopoverViewModel.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverViewModel.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverViewModel.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverViewModel.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Permissions/PermissionManager.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PermissionManager.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PermissionManager.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PermissionManager.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/SayItApp.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayItApp.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayItApp.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SayItApp.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Settings/HotkeyRecorderView.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HotkeyRecorderView.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HotkeyRecorderView.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/HotkeyRecorderView.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Settings/SettingsView.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsView.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Settings/SettingsViewModel.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsViewModel.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsViewModel.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsViewModel.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Settings/SettingsWindowController.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsWindowController.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsWindowController.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/SettingsWindowController.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Style/PopoverCardStyle.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverCardStyle.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverCardStyle.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/PopoverCardStyle.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Style/Theme.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/Theme.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/Theme.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/Theme.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Transcription/AppleSpeechEngine.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppleSpeechEngine.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppleSpeechEngine.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/AppleSpeechEngine.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Transcription/TranscriptionEngine.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/TranscriptionEngine.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/TranscriptionEngine.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/TranscriptionEngine.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Transcription/WhisperCppContext.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperCppContext.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperCppContext.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperCppContext.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/SayIt/Transcription/WhisperEngine.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperEngine.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperEngine.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/WhisperEngine.o"
+  },
+  "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/SayIt.build/Release/SayIt.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/prince/Desktop/SayIt/SayIt/build/DerivedData/Build/Intermediates.noindex/SayIt.build/Release/SayIt.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  }
+}

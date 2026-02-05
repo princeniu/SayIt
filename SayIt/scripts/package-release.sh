@@ -18,23 +18,47 @@ echo "🧹 Cleaning previous builds..."
 rm -rf "${BUILD_DIR}"
 mkdir -p "${BUILD_DIR}"
 
-# 2. Build for Release
+# build settings
+CODE_SIGN_ENTITLEMENTS="${PROJECT_NAME}/${PROJECT_NAME}.entitlements"
+# USER: Set your identity here to enable signing
+# CODESIGN_IDENTITY="Developer ID Application: Your Name (TeamID)"
+
 echo "🏗 Building ${PROJECT_NAME} for Release..."
 xcodebuild -project "${PROJECT_NAME}.xcodeproj" \
     -scheme "${SCHEME_NAME}" \
     -configuration Release \
     -derivedDataPath "${BUILD_DIR}/DerivedData" \
     SYMROOT="$(pwd)/${BUILD_DIR}" \
+    CODE_SIGN_ENTITLEMENTS="${CODE_SIGN_ENTITLEMENTS}" \
     build
 
-# 3. Create DMG
-echo "📦 Creating DMG package..."
+# 3. Create Premium DMG
+echo "📦 Creating Premium DMG package..."
+DMG_TEMP_DIR="${BUILD_DIR}/dmg_temp"
+rm -rf "${DMG_TEMP_DIR}"
+mkdir -p "${DMG_TEMP_DIR}"
+
+# Copy App to temp dir
+cp -R "${RELEASE_DIR}/${PROJECT_NAME}.app" "${DMG_TEMP_DIR}/"
+
+# Create link to Applications
+ln -s /Applications "${DMG_TEMP_DIR}/Applications"
+
+# Copy background (hidden)
+mkdir -p "${DMG_TEMP_DIR}/.background"
+# Ensure background exists
+if [ -f "../docs/dmg/background.png" ]; then
+    cp "../docs/dmg/background.png" "${DMG_TEMP_DIR}/.background/"
+fi
+
+echo "💾 Bundling..."
 if [ -f "${DMG_NAME}" ]; then
     rm "${DMG_NAME}"
 fi
 
 hdiutil create -volname "${PROJECT_NAME}" \
-    -srcfolder "${RELEASE_DIR}/${PROJECT_NAME}.app" \
+    -srcfolder "${DMG_TEMP_DIR}" \
     -ov -format UDZO "${DMG_NAME}"
 
-echo "✅ Success! Distribution package created: ${DMG_NAME}"
+echo "✅ Success! Premium distribution package created: ${DMG_NAME}"
+echo "💡 Note: To finalize DMG icon positions and background view, manual arrangement in Finder is recommended before final signing."
