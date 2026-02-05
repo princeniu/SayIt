@@ -27,6 +27,13 @@ struct SettingsView: View {
                 ))
                 .labelsHidden()
             }
+            settingsRow(title: "Global Hotkey") {
+                Button(hotkeyDisplay) {
+                    showHotkeySheet = true
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
             settingsRow(title: "Whisper Model") {
                 HStack(spacing: 12) {
                     modelStatusView(status: appController.state.modelStatus)
