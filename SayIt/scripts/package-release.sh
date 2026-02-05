@@ -20,8 +20,7 @@ mkdir -p "${BUILD_DIR}"
 
 # build settings
 CODE_SIGN_ENTITLEMENTS="${PROJECT_NAME}/${PROJECT_NAME}.entitlements"
-# USER: Set your identity here to enable signing
-# CODESIGN_IDENTITY="Developer ID Application: Your Name (TeamID)"
+CODESIGN_IDENTITY="Developer ID Application: Zhuo Niu (V7Z2QYFJWN)"
 
 echo "🏗 Building ${PROJECT_NAME} for Release..."
 xcodebuild -project "${PROJECT_NAME}.xcodeproj" \
@@ -31,6 +30,14 @@ xcodebuild -project "${PROJECT_NAME}.xcodeproj" \
     SYMROOT="$(pwd)/${BUILD_DIR}" \
     CODE_SIGN_ENTITLEMENTS="${CODE_SIGN_ENTITLEMENTS}" \
     build
+
+# 2.5 Code Sign the app bundle
+if [ -n "${CODESIGN_IDENTITY}" ]; then
+    echo "🔑 Signing app with identity: ${CODESIGN_IDENTITY}"
+    codesign --force --options runtime --deep --sign "${CODESIGN_IDENTITY}" \
+        --entitlements "${CODE_SIGN_ENTITLEMENTS}" \
+        "${RELEASE_DIR}/${PROJECT_NAME}.app"
+fi
 
 # 3. Create Premium DMG
 echo "📦 Creating Premium DMG package..."
