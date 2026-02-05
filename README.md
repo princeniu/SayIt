@@ -14,6 +14,10 @@
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
 </p>
 
+<p align="center">
+  <strong>English</strong> | <a href="README_zh.md">简体中文</a>
+</p>
+
 ---
 
 SayIt is a lightweight, privacy-focused macOS menu bar application that transcribes your voice into text instantly. By leveraging OpenAI's Whisper model running locally via `whisper.cpp`, SayIt ensures your data never leaves your machine while providing lightning-fast, high-accuracy transcriptions.
