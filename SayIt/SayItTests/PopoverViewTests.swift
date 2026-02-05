@@ -39,18 +39,12 @@ import Testing
     #expect(!PopoverView.shouldShowSecondaryStatus(for: .error(.captureFailed)))
 }
 
-@Test func popoverView_shouldShowErrorStatus_onlyWhenError() async throws {
-    #expect(PopoverView.shouldShowErrorStatus(for: .error(.captureFailed)))
-    #expect(!PopoverView.shouldShowErrorStatus(for: .idle))
-    #expect(!PopoverView.shouldShowErrorStatus(for: .recording))
-    #expect(!PopoverView.shouldShowErrorStatus(for: .transcribing(isSlow: false)))
-}
 
-@Test func popoverView_sectionOrder_movesSettingsToTopAndErrorToBottom() async throws {
-    #expect(PopoverView.sectionOrderLayout(for: .idle, includeFeedback: false) == [PopoverView.Section.settings, .actions])
-    #expect(PopoverView.sectionOrderLayout(for: .recording, includeFeedback: false) == [PopoverView.Section.settings, .actions])
-    #expect(PopoverView.sectionOrderLayout(for: .transcribing(isSlow: false), includeFeedback: false) == [PopoverView.Section.settings, .actions])
-    #expect(PopoverView.sectionOrderLayout(for: .error(.captureFailed), includeFeedback: false) == [PopoverView.Section.settings, .actions, .error])
+@Test func popoverView_sectionOrder_alwaysIncludesStatus() async throws {
+    #expect(PopoverView.sectionOrderLayout(for: .idle) == [PopoverView.Section.settings, .actions, .status])
+    #expect(PopoverView.sectionOrderLayout(for: .recording) == [PopoverView.Section.settings, .actions, .status])
+    #expect(PopoverView.sectionOrderLayout(for: .transcribing(isSlow: false)) == [PopoverView.Section.settings, .actions, .status])
+    #expect(PopoverView.sectionOrderLayout(for: .error(.captureFailed)) == [PopoverView.Section.settings, .actions, .status])
 }
 
 @Test func popoverView_settingsSectionOrder_placesSettingsButtonFirst() async throws {
@@ -95,16 +89,3 @@ import Testing
     #expect(PopoverView.shouldBlur(for: nil) == false)
 }
 
-@Test func popoverView_feedbackVisibility_rules() async throws {
-    #expect(PopoverView.shouldShowFeedback(for: .transcribing(isSlow: false), downloadState: .hidden, showDownloadPrompt: false, phaseDetail: nil) == true)
-    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .progress(0.2), showDownloadPrompt: false, phaseDetail: nil) == true)
-    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .hidden, showDownloadPrompt: true, phaseDetail: nil) == true)
-    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .hidden, showDownloadPrompt: false, phaseDetail: nil) == false)
-    #expect(PopoverView.shouldShowFeedback(for: .error(.permissionDenied), downloadState: .hidden, showDownloadPrompt: false, phaseDetail: .needsPermissions) == true)
-}
-
-@Test func popoverView_feedbackStatusText_forTranscribing() async throws {
-    #expect(PopoverView.feedbackStatusText(for: .transcribing(isSlow: false)) == "Transcribing…")
-    #expect(PopoverView.feedbackStatusText(for: .transcribing(isSlow: true)) == "Transcribing (Slow)…")
-    #expect(PopoverView.feedbackStatusText(for: .recording) == nil)
-}
