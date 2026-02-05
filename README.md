@@ -26,6 +26,7 @@ SayIt is a lightweight, privacy-focused macOS menu bar application that transcri
 -   **Smart HUD**: A non-intrusive floating HUD shows transcription progress in real-time.
 -   **Elegant UI**: Native macOS look and feel with a refined popover for settings and status.
 -   **Whisper Integration**: Supports multiple Whisper models (Small, Base, Tiny) for optimal performance.
+-   **Intelligent Audio Routing**: Optimized for "Clamshell Mode". Automatically switches to your iPhone microphone via Continuity when the Mac lid is closed and the built-in mic is disabled.
 
 ## 🚀 Getting Started
 
