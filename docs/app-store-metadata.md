@@ -1,7 +1,7 @@
 # Mac App Store Metadata
 
 ## App Information
-- **Name**: SayIt - AI Voice to Text
+- **Name**: SayIt Now - AI Voice to Text
 - **Subtitle**: Minimalist Local Transcription
 - **Category**: Productivity / Utilities
 
