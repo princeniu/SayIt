@@ -41,16 +41,6 @@ struct SettingsView: View {
                     modelStatusView(status: appController.state.modelStatus)
                 }
             }
-            settingsRow(title: "Global hotkey") {
-                HStack(spacing: 8) {
-                    Text(hotkeyDisplay)
-                        .foregroundColor(Theme.Colors.textSecondary)
-                    Button("Change…") {
-                        showHotkeySheet = true
-                    }
-                    .buttonStyle(.link)
-                }
-            }
             settingsRow(title: "Crash reporting") {
                 Toggle("", isOn: $crashReportingEnabled)
                     .labelsHidden()
@@ -111,7 +101,7 @@ struct SettingsView: View {
                 Text(message)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.error)
-                Button("Retry") {
+                Button(String(localized: "Retry")) {
                     appController.startModelDownload()
                 }
                 .buttonStyle(.link)

@@ -1,0 +1,50 @@
+/* 
+  Localizable.strings
+  SayIt
+
+  Created by SayIt AI on 2026.
+*/
+
+/* Menu Bar / Popover */
+"Settings…" = "Settings…";
+"Microphone" = "Microphone";
+"No input devices" = "No input devices";
+"Engine" = "Engine";
+"Language" = "Language";
+"System (Recommended)" = "System (Recommended)";
+"Chinese (Simplified)" = "Chinese (Simplified)";
+"English" = "English";
+"Start Recording" = "Start Recording";
+"Stop & Transcribe" = "Stop & Transcribe";
+"Transcribing…" = "Transcribing…";
+"Transcribing (Slow)…" = "Transcribing (Slow)…";
+"Ready to Record" = "Ready to Record";
+"Processing audio…" = "Processing audio…";
+"This is taking longer than usual…" = "This is taking longer than usual…";
+"Recording…" = "Recording…";
+
+/* Status & Errors */
+"Microphone and speech permissions required" = "Microphone and speech permissions required";
+"Open System Settings" = "Open System Settings";
+"Input device disconnected. Switched to default." = "Input device disconnected. Switched to default.";
+"Whisper model required" = "Whisper model required";
+"Download Model" = "Download Model";
+"Retry" = "Retry";
+"Check permissions" = "Check permissions";
+"Audio input unavailable" = "Audio input unavailable";
+"Transcription failed" = "Transcription failed";
+
+/* Settings Window */
+"General" = "General";
+"Global hotkey" = "Global hotkey";
+"Launch at login" = "Launch at login";
+"Whisper Model" = "Whisper Model";
+"Change…" = "Change…";
+"Download" = "Download";
+"Ready" = "Ready";
+"Model: %@" = "Model: %@";
+"Press a new shortcut" = "Press a new shortcut";
+"Modifier required" = "Modifier required";
+"Recorder not ready" = "Recorder not ready";
+"Mic: %@" = "Mic: %@";
+"Error" = "Error";
