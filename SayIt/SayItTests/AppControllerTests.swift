@@ -359,6 +359,40 @@ import Testing
     #expect(controller.state.audioLevel == 0.42)
 }
 
+@Test func transcribing_showsSlowStatus_afterDelay() async throws {
+    let suiteName = "AppControllerTests.transcribing_showsSlowStatus_afterDelay"
+    let suite = UserDefaults(suiteName: suiteName) ?? .standard
+    suite.removePersistentDomain(forName: suiteName)
+    
+    // Use a transcription engine that hangs/delays
+    let transcriptionEngine = TestTranscriptionEngine(delay: 5.0, result: "hello")
+    
+    let controller = AppController(
+        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, userDefaults: suite, useSystemStatus: false),
+        audioDeviceManager: AudioDeviceManager(startMonitoring: false),
+        audioCaptureEngine: TestAudioCaptureEngine(),
+        transcriptionEngine: transcriptionEngine,
+        settingsUserDefaults: suite,
+        autoRequestPermissions: false
+    )
+
+    controller.send(AppIntent.startRecording)
+    controller.send(AppIntent.stopAndTranscribe) // Starts 3s timer
+
+    // Verify initial state is fast
+    #expect(controller.state.mode == AppMode.transcribing(isSlow: false))
+
+    // Wait for timer to fire (3.0s) + small buffer, but before transcription completes (5.0s)
+    try await Task.sleep(nanoseconds: 3_200_000_000)
+
+    // Check if state updated to slow
+    if case .transcribing(let isSlow) = controller.state.mode {
+        #expect(isSlow == true)
+    } else {
+        #expect(Bool(false), "Mode should be transcribing")
+    }
+}
+
 final class TestSettingsWindowController: SettingsWindowControlling {
     private(set) var showCalled = false
 

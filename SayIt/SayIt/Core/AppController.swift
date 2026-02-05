@@ -153,8 +153,19 @@ final class AppController: ObservableObject {
             state.transcribingStartedAt = Date()
             state.recordingStartedAt = nil
             state.audioLevel = 0
+            
+            // Start latency hint after 3 seconds
+            let slowHintTask = DispatchWorkItem { [weak self] in
+                guard let self, case .transcribing(let isSlow) = self.state.mode, !isSlow else { return }
+                self.state.mode = .transcribing(isSlow: true)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: slowHintTask)
+            
             Task { [weak self] in
-                guard let self else { return }
+                guard let self else {
+                    slowHintTask.cancel()
+                    return
+                }
                 do {
                     let buffer: AVAudioPCMBuffer
                     do {
@@ -162,6 +173,7 @@ final class AppController: ObservableObject {
                         print("SayIt: audioCaptureEngine.stopAndFinalize succeeded. frames=\(buffer.frameLength)")
                     } catch {
                         print("SayIt: audioCaptureEngine.stopAndFinalize failed: \(error)")
+                        slowHintTask.cancel()
                         await MainActor.run {
                             self.state.mode = .error(.captureFailed)
                             self.state.phaseDetail = nil
@@ -174,6 +186,7 @@ final class AppController: ObservableObject {
                     let locale = self.transcriptionLocaleForCurrentEngine()
                     print("SayIt: transcribing with engine=\(self.selectedEngine.rawValue) locale=\(locale.identifier)")
                     let text = try await engine.transcribe(buffer: buffer, locale: locale)
+                    slowHintTask.cancel()
                     await MainActor.run {
                         print("SayIt: transcription succeeded. textLength=\(text.count)")
                         _ = self.clipboardManager.write(text)
@@ -191,6 +204,7 @@ final class AppController: ObservableObject {
                     }
                 } catch {
                     print("SayIt: transcription failed: \(error)")
+                    slowHintTask.cancel()
                     await MainActor.run {
                         self.state.mode = .error(.transcriptionFailed)
                         self.state.phaseDetail = nil
