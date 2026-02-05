@@ -304,7 +304,7 @@ struct PopoverView: View {
                     if let text = secondaryStatusText(at: context.date) {
                         Text(text)
                             .font(.caption)
-                            .foregroundStyle(Theme.Colors.textSecondary)
+                            .foregroundStyle(Theme.Colors.textSecondary.opacity(0.9))
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
