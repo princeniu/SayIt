@@ -16,14 +16,14 @@
 
 ## Decision Log
 - Architecture: SwiftUI + AppKit StatusItem bridge for best control (chosen over pure SwiftUI/AppKit).
-- Popover: non-activating; HUD used for transient “Copied” events.
+- Popover: non-activating; HUD used for transient “Copied” events and triggers in-popover blur.
 - State machine: Idle/Recording/Transcribing/Error; `isSlow` only UI hint, not error.
 - Error UX: primary button always “Start Recording”; error actions are secondary.
 - Permissions: request mic + speech once on first launch.
 - Storage: no audio saved; no history in MVP.
 - Settings: login item + global hotkey included.
 - Menu bar icon: light status indication for Recording/Transcribing.
-- Feedback UX: recording time + transcribing text shown below button; copied uses HUD.
+- Feedback UX: recording time shown below button; download/transcribing feedback in a separate card; copied uses HUD.
 - Global hotkey: Carbon RegisterEventHotKey for reliability; default ⌥Z; user can rebind.
 - Audio level: system-like dot indicator; only visible during recording; placed under recording duration.
 
@@ -53,7 +53,7 @@
   - Device disconnect → Error(deviceDisconnectedDuringRecording)
 - **Transcribing**
   - Slow path → `isSlow = true` (UI “Still working…”)
-  - Success → clipboard write → HUD “Copied” → Idle
+- Success → clipboard write → HUD “Copied” → Popover blur → Idle
   - Failure → Error(transcriptionFailed)
 - **Error**
   - Primary: Start Recording (if recoverable)
@@ -73,7 +73,7 @@
 ## User Feedback (Smooth & Consistent)
 - **Recording Duration**: show `MM:SS` below the primary button, updating every second.
 - **Transcribing**: show “Transcribing…” below the primary button; after 5s show “Still working…”.
-- **Copied**: show HUD/Toast “Copied ✓” (no focus steal), then return to Idle.
+- **Copied**: show HUD/Toast “Copied ✓” (no focus steal); popover blurs + locks interactions until it clears.
 
 ## Settings
 - Login item (auto start)

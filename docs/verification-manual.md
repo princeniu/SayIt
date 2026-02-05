@@ -6,6 +6,7 @@ Use this checklist for smoke testing before release.
 - Start recording from popover, then stop and transcribe, clipboard auto-copies.
 - HUD shows "Copied ✓" after transcription completes.
 - Menu bar icon reflects Recording and Transcribing states.
+- While HUD is visible, popover blurs and ignores interactions.
 
 ## Permissions
 - First launch requests microphone and speech permissions once.
@@ -21,6 +22,7 @@ Use this checklist for smoke testing before release.
 - Global hotkey setting shows current binding.
 - Crash reporting toggle updates preference.
 - Engine selector shows System (recommended) and High Accuracy (Offline) • Pro.
+- Settings view uses the same dark card styling as the popover.
 
 ## Whisper (Pro / Offline)
 - Switching Engine to Pro prompts download if the model is missing.
