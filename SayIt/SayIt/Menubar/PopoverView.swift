@@ -4,6 +4,7 @@ import SwiftUI
 
 struct PopoverView: View {
     @EnvironmentObject private var appController: AppController
+    @StateObject private var viewModel = PopoverViewModel(state: AppState(), selectedMicName: "Unknown")
     @AppStorage("transcriptionLanguage") private var transcriptionLanguage = "system"
 
     static let cardSpacing: CGFloat = 12
@@ -12,8 +13,7 @@ struct PopoverView: View {
     enum Section: Hashable {
         case settings
         case actions
-        case feedback
-        case error
+        case status
     }
 
     enum SettingsRow: Hashable {
@@ -61,22 +61,8 @@ struct PopoverView: View {
         return false
     }
 
-    static func shouldShowErrorStatus(for mode: AppMode) -> Bool {
-        if case .error = mode {
-            return true
-        }
-        return false
-    }
-
-    static func sectionOrderLayout(for mode: AppMode, includeFeedback: Bool) -> [Section] {
-        var sections: [Section] = [.settings, .actions]
-        if includeFeedback {
-            sections.append(.feedback)
-        }
-        if shouldShowErrorStatus(for: mode) {
-            sections.append(.error)
-        }
-        return sections
+    static func sectionOrderLayout(for mode: AppMode) -> [Section] {
+        return [.settings, .actions, .status]
     }
 
     static func settingsSectionOrderLayout() -> [SettingsRow] {
@@ -85,36 +71,6 @@ struct PopoverView: View {
 
     static func shouldDisableLanguage(forEngine engine: TranscriptionEngineType) -> Bool {
         engine == .whisper
-    }
-
-    static func shouldShowFeedback(
-        for mode: AppMode,
-        downloadState: DownloadStatusViewState,
-        showDownloadPrompt: Bool,
-        phaseDetail: PhaseDetail?
-    ) -> Bool {
-        if phaseDetail == .needsPermissions {
-            return true
-        }
-        if case .transcribing = mode {
-            return true
-        }
-        if showDownloadPrompt {
-            return true
-        }
-        if case .hidden = downloadState {
-            return false
-        }
-        return true
-    }
-
-    static func feedbackStatusText(for mode: AppMode) -> String? {
-        switch mode {
-        case .transcribing(let isSlow):
-            return isSlow ? "Transcribing (Slow)…" : "Transcribing…"
-        case .idle, .recording, .error:
-            return nil
-        }
     }
 
     static func shouldBlur(for phaseDetail: PhaseDetail?) -> Bool {
@@ -168,25 +124,24 @@ struct PopoverView: View {
     var body: some View {
         let showDownloadPrompt = appController.selectedEngine == .whisper && !appController.isWhisperModelReady
             && downloadStatusState == .hidden
-        let includeFeedback = Self.shouldShowFeedback(
-            for: appController.state.mode,
-            downloadState: downloadStatusState,
-            showDownloadPrompt: showDownloadPrompt,
-            phaseDetail: appController.state.phaseDetail
-        )
         let isBlurred = Self.shouldBlur(for: appController.state.phaseDetail)
         VStack(alignment: .leading, spacing: Self.cardSpacing) {
-            ForEach(Self.sectionOrderLayout(for: appController.state.mode, includeFeedback: includeFeedback), id: \.self) { section in
+            ForEach(Self.sectionOrderLayout(for: appController.state.mode), id: \.self) { section in
                 switch section {
                 case .settings:
                     settingsSection.popoverCard()
                 case .actions:
                     actionsSection.popoverCard()
-                case .feedback:
-                    feedbackSection(showDownloadPrompt: showDownloadPrompt)
-                        .popoverCard()
-                case .error:
-                    errorSection
+                case .status:
+                    let shouldShowStatus = appController.state.mode != .idle 
+                        || appController.state.phaseDetail == .needsPermissions
+                        || appController.state.phaseDetail == .deviceFallback
+                        || showDownloadPrompt
+                    
+                    if shouldShowStatus {
+                        statusSection(showDownloadPrompt: showDownloadPrompt)
+                            .popoverCard()
+                    }
                 }
             }
         }
@@ -203,6 +158,14 @@ struct PopoverView: View {
         )
         .allowsHitTesting(!isBlurred)
         .animation(.easeInOut(duration: Theme.Motion.standard), value: isBlurred)
+        .onAppear {
+            viewModel.update(state: appController.state)
+            viewModel.update(selectedMicName: appController.selectedMicName)
+        }
+        .onReceive(appController.$state) { state in
+            viewModel.update(state: state)
+            viewModel.update(selectedMicName: appController.selectedMicName)
+        }
     }
 
     @ViewBuilder
@@ -284,46 +247,52 @@ struct PopoverView: View {
     @ViewBuilder
     private var actionsSection: some View {
         let style = Self.primaryButtonStyle(for: appController.state.mode)
-        Button(action: primaryAction) {
-            Text(primaryButtonTitle)
-                .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.plain)
-        .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.Radius.button)
-                .fill(primaryButtonFill(for: style))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.Radius.button)
-                .stroke(Theme.Colors.border.opacity(0.4), lineWidth: 1)
-        )
-        .foregroundStyle(primaryButtonForeground(for: style))
-        .shadow(color: Theme.Colors.accentGlow, radius: style == .recording ? 14 : 0, x: 0, y: 6)
-        .animation(.easeInOut(duration: Theme.Motion.standard), value: style)
-        .disabled(style == .transcribing)
+        VStack(spacing: 8) {
+            Button(action: primaryAction) {
+                Text(LocalizedStringKey(primaryButtonTitle))
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.Radius.button)
+                    .fill(primaryButtonFill(for: style))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.button)
+                    .stroke(Theme.Colors.border.opacity(0.4), lineWidth: 1)
+            )
+            .foregroundStyle(primaryButtonForeground(for: style))
+            .shadow(color: Theme.Colors.accentGlow, radius: style == .recording ? 14 : 0, x: 0, y: 6)
+            .animation(.easeInOut(duration: Theme.Motion.standard), value: style)
+            .disabled(style == .transcribing)
 
-        VStack(spacing: 6) {
-            if Self.shouldShowSecondaryStatus(for: appController.state.mode) {
-                TimelineView(.periodic(from: .now, by: 1)) { context in
-                    if let text = secondaryStatusText(at: context.date) {
-                        Text(text)
-                            .font(.caption)
-                            .foregroundStyle(Theme.Colors.textSecondary.opacity(0.9))
-                            .frame(maxWidth: .infinity, alignment: .center)
+            if Self.shouldShowSecondaryStatus(for: appController.state.mode) || Self.shouldShowLevel(for: appController.state.mode) {
+                VStack(spacing: 6) {
+                    if Self.shouldShowSecondaryStatus(for: appController.state.mode) {
+                        TimelineView(.periodic(from: .now, by: 1)) { context in
+                            if let text = secondaryStatusText(at: context.date) {
+                                Text(text)
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.Colors.textSecondary.opacity(0.9))
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            }
+                        }
+                    }
+
+                    if Self.shouldShowLevel(for: appController.state.mode) {
+                        LevelMeterView(level: appController.state.audioLevel)
                     }
                 }
-            }
-
-            if Self.shouldShowLevel(for: appController.state.mode) {
-                LevelMeterView(level: appController.state.audioLevel)
+                .padding(.top, 4)
             }
         }
     }
 
     @ViewBuilder
-    private func feedbackSection(showDownloadPrompt: Bool) -> some View {
+    private func statusSection(showDownloadPrompt: Bool) -> some View {
         VStack(alignment: .leading, spacing: 8) {
+            // Priority 1: Permissions / Fallback
             if appController.state.phaseDetail == .needsPermissions {
                 VStack(spacing: 6) {
                     Text("Microphone and speech permissions required")
@@ -335,22 +304,30 @@ struct PopoverView: View {
                     }
                     .buttonStyle(.link)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityHint("Opens macOS System Settings")
                 }
-            }
-            if let text = Self.feedbackStatusText(for: appController.state.mode) {
-                Text(text)
+            } else if appController.state.phaseDetail == .deviceFallback {
+                Text("Input device disconnected. Switched to default.")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                 // Priority 2: Standard Status
+                 if !viewModel.primaryStatusText.isEmpty {
+                     Text(viewModel.primaryStatusText)
+                         .font(.caption)
+                         .foregroundStyle(Theme.Colors.textPrimary)
+                 }
+                 if let secondary = viewModel.secondaryStatusText {
+                     Text(secondary)
+                         .font(.caption)
+                         .foregroundStyle(Theme.Colors.textSecondary)
+                 }
             }
+            
+            // Priority 3: Downloads
             downloadStatusSection(showDownloadPrompt: showDownloadPrompt)
         }
-    }
-
-    @ViewBuilder
-    private var errorSection: some View {
-        Text(appController.state.statusDetail(selectedMic: appController.selectedMicName))
-            .font(.caption)
-            .foregroundStyle(Theme.Colors.error)
     }
 
     @ViewBuilder
@@ -372,6 +349,7 @@ struct PopoverView: View {
             ProgressView(value: progress)
                 .progressViewStyle(.linear)
                 .frame(maxWidth: .infinity)
+                .accessibilityLabel("Download progress")
         case .failed(let message):
             VStack(spacing: 4) {
                 Text(message)
