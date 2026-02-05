@@ -362,7 +362,7 @@ import Testing
 final class TestSettingsWindowController: SettingsWindowControlling {
     private(set) var showCalled = false
 
-    func show() {
+    @MainActor func show(appController: AppController) {
         showCalled = true
     }
 }

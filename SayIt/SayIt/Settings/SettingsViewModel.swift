@@ -10,6 +10,7 @@ final class SettingsViewModel: ObservableObject {
             settingsUserDefaults.set(preferredModel.rawValue, forKey: preferredModelKey)
         }
     }
+    @Published var modelStatus: ModelStatus = .idle
 
     private let launchAtLoginManager: LaunchAtLoginManaging
     private let settingsUserDefaults: UserDefaults

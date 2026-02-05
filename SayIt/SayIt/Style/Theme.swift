@@ -14,6 +14,7 @@ enum Theme {
         static let accentPressed = Color(red: 0.88, green: 0.44, blue: 0.10)
         static let accentGlow = Color(red: 1.0, green: 0.54, blue: 0.16).opacity(0.30)
         static let error = Color(red: 1.0, green: 0.35, blue: 0.35)
+        static let success = Color(red: 0.35, green: 1.0, blue: 0.35)
     }
 
     enum Radius {

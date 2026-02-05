@@ -75,6 +75,21 @@ final class AppController: ObservableObject {
                 self?.selectedMicID = selected
             }
             .store(in: &cancellables)
+        audioDeviceManager.events
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                guard let self else { return }
+                switch event {
+                case .deviceUnavailable:
+                    if self.selectedMicID == nil, let fallback = self.audioDeviceManager.devices.first?.id {
+                        self.audioDeviceManager.selectDevice(id: fallback)
+                    }
+                    self.state.phaseDetail = .deviceFallback
+                case .deviceSwitched:
+                    break
+                }
+            }
+            .store(in: &cancellables)
         if autoRequestPermissions {
             self.permissionManager.requestPermissionsIfNeeded()
         }
@@ -199,7 +214,7 @@ final class AppController: ObservableObject {
             permissionManager.openSystemSettings()
         case .openSettingsWindow:
             Task { @MainActor in
-                settingsWindowController.show()
+                settingsWindowController.show(appController: self)
             }
         }
     }
@@ -283,6 +298,10 @@ final class AppController: ObservableObject {
         }
         let localURL = modelManager.localURL(for: type)
         return FileManager.default.fileExists(atPath: localURL.path) ? localURL : nil
+    }
+
+    func checkModelStatus() {
+        refreshModelStatus()
     }
 
     private func refreshModelStatus() {

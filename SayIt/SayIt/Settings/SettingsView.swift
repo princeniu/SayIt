@@ -2,6 +2,7 @@ import SwiftUI
 
 @MainActor
 struct SettingsView: View {
+    @EnvironmentObject private var appController: AppController
     @StateObject private var viewModel: SettingsViewModel
     @State private var crashReportingEnabled = true
     @State private var showHotkeySheet = false
@@ -27,12 +28,18 @@ struct SettingsView: View {
                 .labelsHidden()
             }
             settingsRow(title: "Whisper Model") {
-                Picker("", selection: $viewModel.preferredModel) {
-                    ForEach(WhisperModelType.allCases, id: \.self) { model in
-                        Text(model.rawValue.capitalized).tag(model)
+                VStack(alignment: .trailing, spacing: 6) {
+                    Picker("", selection: $viewModel.preferredModel) {
+                        ForEach(WhisperModelType.allCases, id: \.self) { model in
+                            Text(model.rawValue.capitalized).tag(model)
+                        }
                     }
+                    .onChange(of: viewModel.preferredModel) { _ in
+                        appController.checkModelStatus()
+                    }
+                    
+                    modelStatusView(status: appController.state.modelStatus)
                 }
-                .labelsHidden()
             }
             settingsRow(title: "Global hotkey") {
                 HStack(spacing: 8) {
@@ -72,6 +79,45 @@ struct SettingsView: View {
             content()
         }
         .padding(.vertical, 6)
+    }
+
+    @ViewBuilder
+    private func modelStatusView(status: ModelStatus) -> some View {
+        switch status {
+        case .idle:
+            if !appController.isWhisperModelReady {
+                Button("Download") {
+                    appController.startModelDownload()
+                }
+                .buttonStyle(.link)
+                .font(.caption)
+            }
+        case .downloading(let progress):
+            HStack(spacing: 8) {
+                ProgressView(value: progress)
+                    .progressViewStyle(.linear)
+                    .frame(width: 100)
+                Text("\(Int(progress * 100))%")
+                    .font(.caption)
+                    .monospacedDigit()
+                    .foregroundStyle(Theme.Colors.textSecondary)
+            }
+        case .ready:
+            Label("Ready", systemImage: "checkmark.circle.fill")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.success)
+        case .failed(let message):
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.error)
+                Button("Retry") {
+                    appController.startModelDownload()
+                }
+                .buttonStyle(.link)
+                .font(.caption)
+            }
+        }
     }
 }
 
