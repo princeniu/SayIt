@@ -13,15 +13,15 @@ DMG_NAME="${PROJECT_NAME}_v1.0.0.dmg"
 
 echo "🚀 Starting productization build..."
 
-# 0. Deep clean extended attributes (fixes "detritus" errors)
-echo "🧹 Cleaning extended attributes..."
-xattr -rc .
-dot_clean .
-
-# 1. Clean previous builds
+# 1. Clean previous builds first to avoid permission issues in DerivedData
 echo "🧹 Removing previous build artifacts..."
 rm -rf "${BUILD_DIR}"
 mkdir -p "${BUILD_DIR}"
+
+# 0. Deep clean extended attributes (fixes "detritus" errors)
+echo "🧹 Cleaning extended attributes..."
+xattr -rc . 2>/dev/null || true
+dot_clean . 2>/dev/null || true
 
 # build settings
 CODE_SIGN_ENTITLEMENTS="${PROJECT_NAME}/${PROJECT_NAME}.entitlements"

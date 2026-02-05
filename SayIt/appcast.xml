@@ -8,7 +8,7 @@
             <sparkle:version>1</sparkle:version>
             <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <enclosure url="SayIt_v1.0.0.dmg" length="6841133" type="application/octet-stream"/>
+            <enclosure url="SayIt_v1.0.0.dmg" length="6841950" type="application/octet-stream"/>
         </item>
     </channel>
 </rss>
