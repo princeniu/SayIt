@@ -20,6 +20,7 @@ final class AppControllerFlowTests: XCTestCase {
             audioDeviceManager: AudioDeviceManager(startMonitoring: false),
             audioCaptureEngine: audioCaptureEngine,
             transcriptionEngine: TestTranscriptionEngine(),
+            settingsUserDefaults: suite ?? .standard,
             autoRequestPermissions: false
         )
 
@@ -50,6 +51,7 @@ final class AppControllerFlowTests: XCTestCase {
             audioDeviceManager: deviceManager,
             audioCaptureEngine: audioCaptureEngine,
             transcriptionEngine: TestTranscriptionEngine(),
+            settingsUserDefaults: suite ?? .standard,
             autoRequestPermissions: false
         )
 
@@ -74,6 +76,7 @@ final class AppControllerFlowTests: XCTestCase {
             audioDeviceManager: AudioDeviceManager(startMonitoring: false),
             audioCaptureEngine: audioCaptureEngine,
             transcriptionEngine: transcriptionEngine,
+            settingsUserDefaults: suite ?? .standard,
             autoRequestPermissions: false
         )
 

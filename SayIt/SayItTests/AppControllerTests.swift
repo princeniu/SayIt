@@ -19,6 +19,7 @@ import Testing
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: audioCaptureEngine,
         transcriptionEngine: TestTranscriptionEngine(),
+        settingsUserDefaults: suite ?? .standard,
         autoRequestPermissions: false
     )
     #expect(controller.state.mode == AppMode.idle)
@@ -44,6 +45,7 @@ import Testing
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: audioCaptureEngine,
         transcriptionEngine: TestTranscriptionEngine(),
+        settingsUserDefaults: suite ?? .standard,
         autoRequestPermissions: false
     )
 
@@ -74,6 +76,7 @@ import Testing
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: audioCaptureEngine,
         transcriptionEngine: transcriptionEngine,
+        settingsUserDefaults: suite ?? .standard,
         autoRequestPermissions: false
     )
 
@@ -110,6 +113,7 @@ import Testing
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: audioCaptureEngine,
         transcriptionEngine: transcriptionEngine,
+        settingsUserDefaults: suite ?? .standard,
         autoRequestPermissions: false
     )
 
@@ -142,6 +146,7 @@ import Testing
         audioDeviceManager: deviceManager,
         audioCaptureEngine: audioCaptureEngine,
         transcriptionEngine: TestTranscriptionEngine(),
+        settingsUserDefaults: suite ?? .standard,
         autoRequestPermissions: false
     )
 
@@ -151,8 +156,10 @@ import Testing
 }
 
 @Test func stopAndTranscribe_usesConfiguredLanguage() async throws {
-    let suite = UserDefaults(suiteName: "AppControllerTests") ?? .standard
-    suite.removePersistentDomain(forName: "AppControllerTests")
+    let suiteName = "AppControllerTests.stopAndTranscribe_usesConfiguredLanguage"
+    let suite = UserDefaults(suiteName: suiteName) ?? .standard
+    suite.removePersistentDomain(forName: suiteName)
+    suite.set(TranscriptionEngineType.system.rawValue, forKey: "transcriptionEngine")
     suite.set("zh-Hans", forKey: "transcriptionLanguage")
     #expect(suite.string(forKey: "transcriptionLanguage") == "zh-Hans")
     let audioCaptureEngine = TestAudioCaptureEngine()
@@ -171,6 +178,7 @@ import Testing
         settingsUserDefaults: suite,
         autoRequestPermissions: false
     )
+    controller.setEngine(.system)
 
     controller.send(AppIntent.startRecording)
     controller.send(AppIntent.stopAndTranscribe)
@@ -201,6 +209,7 @@ import Testing
         audioCaptureEngine: TestAudioCaptureEngine(),
         transcriptionEngine: TestTranscriptionEngine(),
         settingsWindowController: settingsWindow,
+        settingsUserDefaults: suite,
         autoRequestPermissions: false
     )
 
@@ -302,6 +311,7 @@ import Testing
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: audioCaptureEngine,
         transcriptionEngine: TestTranscriptionEngine(),
+        settingsUserDefaults: suite ?? .standard,
         autoRequestPermissions: false
     )
 
