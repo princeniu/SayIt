@@ -12,6 +12,7 @@ struct PopoverView: View {
     enum Section: Hashable {
         case settings
         case actions
+        case feedback
         case error
     }
 
@@ -20,6 +21,12 @@ struct PopoverView: View {
         case microphone
         case engine
         case language
+    }
+
+    enum PrimaryButtonStyle: Equatable {
+        case ready
+        case recording
+        case transcribing
     }
 
     struct LanguageOption: Identifiable, Equatable {
@@ -61,8 +68,11 @@ struct PopoverView: View {
         return false
     }
 
-    static func sectionOrderLayout(for mode: AppMode) -> [Section] {
+    static func sectionOrderLayout(for mode: AppMode, includeFeedback: Bool) -> [Section] {
         var sections: [Section] = [.settings, .actions]
+        if includeFeedback {
+            sections.append(.feedback)
+        }
         if shouldShowErrorStatus(for: mode) {
             sections.append(.error)
         }
@@ -75,6 +85,43 @@ struct PopoverView: View {
 
     static func shouldDisableLanguage(forEngine engine: TranscriptionEngineType) -> Bool {
         engine == .whisper
+    }
+
+    static func shouldShowFeedback(
+        for mode: AppMode,
+        downloadState: DownloadStatusViewState,
+        showDownloadPrompt: Bool
+    ) -> Bool {
+        if case .transcribing = mode {
+            return true
+        }
+        if showDownloadPrompt {
+            return true
+        }
+        if case .hidden = downloadState {
+            return false
+        }
+        return true
+    }
+
+    static func feedbackStatusText(for mode: AppMode) -> String? {
+        switch mode {
+        case .transcribing(let isSlow):
+            return isSlow ? "Transcribing (Slow)…" : "Transcribing…"
+        case .idle, .recording, .error:
+            return nil
+        }
+    }
+
+    static func primaryButtonStyle(for mode: AppMode) -> PrimaryButtonStyle {
+        switch mode {
+        case .idle, .error:
+            return .ready
+        case .recording:
+            return .recording
+        case .transcribing:
+            return .transcribing
+        }
     }
 
     static func levelBarCount(level: Double, maxBars: Int) -> Int {
@@ -111,13 +158,23 @@ struct PopoverView: View {
     }
 
     var body: some View {
+        let showDownloadPrompt = appController.selectedEngine == .whisper && !appController.isWhisperModelReady
+            && downloadStatusState == .hidden
+        let includeFeedback = Self.shouldShowFeedback(
+            for: appController.state.mode,
+            downloadState: downloadStatusState,
+            showDownloadPrompt: showDownloadPrompt
+        )
         VStack(alignment: .leading, spacing: Self.cardSpacing) {
-            ForEach(Self.sectionOrderLayout(for: appController.state.mode), id: \.self) { section in
+            ForEach(Self.sectionOrderLayout(for: appController.state.mode, includeFeedback: includeFeedback), id: \.self) { section in
                 switch section {
                 case .settings:
                     settingsSection.popoverCard()
                 case .actions:
                     actionsSection.popoverCard()
+                case .feedback:
+                    feedbackSection(showDownloadPrompt: showDownloadPrompt)
+                        .popoverCard()
                 case .error:
                     errorSection
                 }
@@ -206,25 +263,34 @@ struct PopoverView: View {
 
     @ViewBuilder
     private var actionsSection: some View {
+        let style = Self.primaryButtonStyle(for: appController.state.mode)
         Button(action: primaryAction) {
             Text(primaryButtonTitle)
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.borderedProminent)
-
-        downloadStatusSection
+        .buttonStyle(.plain)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.button)
+                .fill(primaryButtonFill(for: style))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.Radius.button)
+                .stroke(Theme.Colors.border.opacity(0.4), lineWidth: 1)
+        )
+        .foregroundStyle(primaryButtonForeground(for: style))
+        .shadow(color: Theme.Colors.accentGlow, radius: style == .recording ? 14 : 0, x: 0, y: 6)
+        .animation(.easeInOut(duration: Theme.Motion.standard), value: style)
+        .disabled(style == .transcribing)
 
         VStack(spacing: 6) {
             if Self.shouldShowSecondaryStatus(for: appController.state.mode) {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     if let text = secondaryStatusText(at: context.date) {
-                        HStack {
-                            Spacer()
-                            Text(text)
-                                .font(.caption)
-                                .foregroundStyle(Theme.Colors.textSecondary)
-                            Spacer()
-                        }
+                        Text(text)
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.textSecondary)
+                            .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
             }
@@ -236,6 +302,18 @@ struct PopoverView: View {
     }
 
     @ViewBuilder
+    private func feedbackSection(showDownloadPrompt: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let text = Self.feedbackStatusText(for: appController.state.mode) {
+                Text(text)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.textSecondary)
+            }
+            downloadStatusSection(showDownloadPrompt: showDownloadPrompt)
+        }
+    }
+
+    @ViewBuilder
     private var errorSection: some View {
         Text(appController.state.statusDetail(selectedMic: appController.selectedMicName))
             .font(.caption)
@@ -243,9 +321,9 @@ struct PopoverView: View {
     }
 
     @ViewBuilder
-    private var downloadStatusSection: some View {
+    private func downloadStatusSection(showDownloadPrompt: Bool) -> some View {
         switch downloadStatusState {
-        case .hidden where appController.selectedEngine == .whisper && !appController.isWhisperModelReady:
+        case .hidden where showDownloadPrompt:
             VStack(spacing: 6) {
                 Text("Whisper model required")
                     .font(.caption)
@@ -297,6 +375,26 @@ struct PopoverView: View {
             return "Stop & Transcribe"
         case .transcribing:
             return "Transcribing…"
+        }
+    }
+
+    private func primaryButtonFill(for style: PrimaryButtonStyle) -> Color {
+        switch style {
+        case .ready:
+            return Theme.Colors.accent
+        case .recording:
+            return Theme.Colors.accentPressed
+        case .transcribing:
+            return Theme.Colors.surface2
+        }
+    }
+
+    private func primaryButtonForeground(for style: PrimaryButtonStyle) -> Color {
+        switch style {
+        case .transcribing:
+            return Theme.Colors.textSecondary
+        case .ready, .recording:
+            return Theme.Colors.textPrimary
         }
     }
 

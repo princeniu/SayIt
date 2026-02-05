@@ -47,10 +47,10 @@ import Testing
 }
 
 @Test func popoverView_sectionOrder_movesSettingsToTopAndErrorToBottom() async throws {
-    #expect(PopoverView.sectionOrderLayout(for: .idle) == [PopoverView.Section.settings, .actions])
-    #expect(PopoverView.sectionOrderLayout(for: .recording) == [PopoverView.Section.settings, .actions])
-    #expect(PopoverView.sectionOrderLayout(for: .transcribing(isSlow: false)) == [PopoverView.Section.settings, .actions])
-    #expect(PopoverView.sectionOrderLayout(for: .error(.captureFailed)) == [PopoverView.Section.settings, .actions, .error])
+    #expect(PopoverView.sectionOrderLayout(for: .idle, includeFeedback: false) == [PopoverView.Section.settings, .actions])
+    #expect(PopoverView.sectionOrderLayout(for: .recording, includeFeedback: false) == [PopoverView.Section.settings, .actions])
+    #expect(PopoverView.sectionOrderLayout(for: .transcribing(isSlow: false), includeFeedback: false) == [PopoverView.Section.settings, .actions])
+    #expect(PopoverView.sectionOrderLayout(for: .error(.captureFailed), includeFeedback: false) == [PopoverView.Section.settings, .actions, .error])
 }
 
 @Test func popoverView_settingsSectionOrder_placesSettingsButtonFirst() async throws {
@@ -80,4 +80,24 @@ import Testing
 @Test func popoverView_languageDisabledWhenUsingWhisper() async throws {
     #expect(PopoverView.shouldDisableLanguage(forEngine: .system) == false)
     #expect(PopoverView.shouldDisableLanguage(forEngine: .whisper) == true)
+}
+
+@Test func popoverView_primaryButtonStyle_mapsModes() async throws {
+    #expect(PopoverView.primaryButtonStyle(for: .idle) == .ready)
+    #expect(PopoverView.primaryButtonStyle(for: .error(.captureFailed)) == .ready)
+    #expect(PopoverView.primaryButtonStyle(for: .recording) == .recording)
+    #expect(PopoverView.primaryButtonStyle(for: .transcribing(isSlow: false)) == .transcribing)
+}
+
+@Test func popoverView_feedbackVisibility_rules() async throws {
+    #expect(PopoverView.shouldShowFeedback(for: .transcribing(isSlow: false), downloadState: .hidden, showDownloadPrompt: false) == true)
+    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .progress(0.2), showDownloadPrompt: false) == true)
+    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .hidden, showDownloadPrompt: true) == true)
+    #expect(PopoverView.shouldShowFeedback(for: .idle, downloadState: .hidden, showDownloadPrompt: false) == false)
+}
+
+@Test func popoverView_feedbackStatusText_forTranscribing() async throws {
+    #expect(PopoverView.feedbackStatusText(for: .transcribing(isSlow: false)) == "Transcribing…")
+    #expect(PopoverView.feedbackStatusText(for: .transcribing(isSlow: true)) == "Transcribing (Slow)…")
+    #expect(PopoverView.feedbackStatusText(for: .recording) == nil)
 }
