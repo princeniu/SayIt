@@ -7,9 +7,9 @@ enum TranscriptionEngineType: String, CaseIterable, Codable {
     var displayTitle: String {
         switch self {
         case .system:
-            return "System (Recommended)"
+            return "Apple Speech"
         case .whisper:
-            return "High Accuracy (Offline) • Pro"
+            return "Whisper"
         }
     }
 }
