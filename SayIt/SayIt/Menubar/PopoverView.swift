@@ -4,6 +4,7 @@ import SwiftUI
 
 struct PopoverView: View {
     @EnvironmentObject private var appController: AppController
+    @ObservedObject private var languageManager = AppLanguageManager.shared
     @StateObject private var viewModel = PopoverViewModel(state: AppState(), selectedMicName: "Unknown")
     @AppStorage("transcriptionLanguage") private var transcriptionLanguage = "system"
 
@@ -31,13 +32,13 @@ struct PopoverView: View {
 
     struct LanguageOption: Identifiable, Equatable {
         let id: String
-        let title: String
+        let localizationKey: String
     }
 
-    static let languageOptions: [LanguageOption] = [
-        LanguageOption(id: "system", title: "System (Recommended)"),
-        LanguageOption(id: "zh-Hans", title: "Chinese (Simplified)"),
-        LanguageOption(id: "en-US", title: "English")
+    static let languageOptionKeys: [LanguageOption] = [
+        LanguageOption(id: "system", localizationKey: "System (Recommended)"),
+        LanguageOption(id: "zh-Hans", localizationKey: "Chinese (Simplified)"),
+        LanguageOption(id: "en-US", localizationKey: "English")
     ]
 
     static func formatDuration(_ seconds: TimeInterval) -> String {
@@ -134,11 +135,11 @@ struct PopoverView: View {
                 case .actions:
                     actionsSection.popoverCard()
                 case .status:
-                    let shouldShowStatus = appController.state.mode != .idle 
+                    let shouldShowStatus = appController.state.mode != .idle
                         || appController.state.phaseDetail == .needsPermissions
                         || appController.state.phaseDetail == .deviceFallback
                         || showDownloadPrompt
-                    
+
                     if shouldShowStatus {
                         statusSection(showDownloadPrompt: showDownloadPrompt)
                             .popoverCard()
@@ -200,9 +201,9 @@ struct PopoverView: View {
                 appController.send(.openSettingsWindow)
             }
             .buttonStyle(.link)
-            
+
             Spacer()
-            
+
             Button("Quit") {
                 appController.send(.terminate)
             }
@@ -233,8 +234,8 @@ struct PopoverView: View {
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.textSecondary)
             Picker("Engine", selection: engineSelection) {
-                Text(TranscriptionEngineType.system.displayTitle).tag(TranscriptionEngineType.system)
-                Text(TranscriptionEngineType.whisper.displayTitle).tag(TranscriptionEngineType.whisper)
+                Text(languageManager.localized(TranscriptionEngineType.system.displayTitle)).tag(TranscriptionEngineType.system)
+                Text(languageManager.localized(TranscriptionEngineType.whisper.displayTitle)).tag(TranscriptionEngineType.whisper)
             }
             .labelsHidden()
         }
@@ -247,8 +248,8 @@ struct PopoverView: View {
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.textSecondary)
             Picker("Language", selection: $transcriptionLanguage) {
-                ForEach(Self.languageOptions) { option in
-                    Text(option.title).tag(option.id)
+                ForEach(Self.languageOptionKeys) { option in
+                    Text(languageManager.localized(option.localizationKey)).tag(option.id)
                 }
             }
             .labelsHidden()
@@ -403,11 +404,11 @@ struct PopoverView: View {
     private var primaryButtonTitle: String {
         switch appController.state.mode {
         case .idle, .error:
-            return "Start Recording"
+            return languageManager.localized("Start Recording")
         case .recording:
-            return "Stop & Transcribe"
+            return languageManager.localized("Stop & Transcribe")
         case .transcribing:
-            return "Transcribing…"
+            return languageManager.localized("Transcribing…")
         }
     }
 

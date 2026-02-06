@@ -6,15 +6,16 @@ final class HUDManager {
     weak var anchorWindow: NSWindow?
 
     func showCopied() {
-        show(message: "Copied ✓")
+        show(message: AppLanguageManager.shared.localized("Copied"))
     }
 
+    /// - Parameter message: Localized message string to display
     func show(message: String) {
         print("SayIt: HUD show '\(message)'. isMainThread=\(Thread.isMainThread)")
         panel?.orderOut(nil)
         let host = NSHostingController(rootView: HUDView(message: message))
         let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 140, height: 48),
+            contentRect: NSRect(x: 0, y: 0, width: 240, height: 120),
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
@@ -23,7 +24,7 @@ final class HUDManager {
         panel.level = .statusBar
         panel.backgroundColor = .clear
         panel.isOpaque = false
-        panel.hasShadow = true
+        panel.hasShadow = false
         panel.ignoresMouseEvents = true
         panel.collectionBehavior = [.canJoinAllSpaces, .transient]
         panel.contentView = host.view
@@ -63,15 +64,26 @@ private struct HUDView: View {
     let message: String
 
     var body: some View {
-        Text(message)
-            .font(.system(size: 13, weight: .medium))
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(NSColor.windowBackgroundColor).opacity(0.9))
-                    .shadow(radius: 8)
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(Theme.Colors.accent)
+                .font(.system(size: 14, weight: .semibold))
+            
+            Text(message)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Theme.Colors.textPrimary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.card)
+                .fill(Theme.Colors.surface2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.Radius.card)
+                        .stroke(Theme.Colors.border.opacity(0.12), lineWidth: 1)
+                )
+        )
+        .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

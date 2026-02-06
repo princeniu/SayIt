@@ -11,10 +11,12 @@ import SwiftUI
 @main
 struct SayItApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @AppStorage("appLanguage") private var appLanguage: String = "system"
 
     var body: some Scene {
         Settings {
             EmptyView()
+                .environment(\.locale, Locale(identifier: appLanguage == "system" ? Locale.current.identifier : appLanguage))
         }
     }
 }

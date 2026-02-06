@@ -3,12 +3,16 @@ import SwiftUI
 @MainActor
 struct SettingsView: View {
     @EnvironmentObject private var appController: AppController
+    @Environment(\.onAppLanguageChange) private var onLanguageChange
     @StateObject private var viewModel: SettingsViewModel
     @State private var crashReportingEnabled = true
     @State private var showHotkeySheet = false
     @AppStorage("hotkeyDisplay") private var hotkeyDisplay = Hotkey.defaultValue.display
     @AppStorage("hotkeyKeyCode") private var hotkeyKeyCode = Int(Hotkey.defaultValue.keyCode)
     @AppStorage("hotkeyModifiers") private var hotkeyModifiers = Int(Hotkey.defaultValue.modifiers.carbonValue)
+    @AppStorage("appLanguage") private var appLanguage: String = "system"
+
+    @State private var reloadID = UUID()
 
     static let cardWidth: CGFloat = 360
     static let cardPadding: CGFloat = 16
@@ -43,10 +47,23 @@ struct SettingsView: View {
                             Text(model.rawValue.capitalized).tag(model)
                         }
                     }
-                    .onChange(of: viewModel.preferredModel) {
+                    .onChange(of: viewModel.preferredModel) { _, _ in
                         appController.checkModelStatus()
                     }
                     .frame(width: 100)
+                }
+            }
+            settingsRow(title: "Interface Language") {
+                Picker("", selection: $appLanguage) {
+                    Text("System Default").tag("system")
+                    Text("English").tag("en")
+                    Text("Chinese (Simplified)").tag("zh-Hans")
+                }
+                .pickerStyle(.menu)
+                .frame(width: 160, alignment: .trailing)
+                .fixedSize(horizontal: true, vertical: false)
+                .onChange(of: appLanguage) { _, newValue in
+                    AppLanguageManager.shared.setLanguage(newValue)
                 }
             }
             settingsRow(title: "Crash reporting") {
@@ -82,6 +99,7 @@ struct SettingsView: View {
                     .font(.caption)
             }
         }
+        .id(reloadID)
         .padding(Self.cardPadding)
         .frame(width: Self.cardWidth)
         .background(Theme.Colors.surface2)
@@ -95,9 +113,14 @@ struct SettingsView: View {
                 HotkeyStorage.save(hotkey, into: .standard)
             }
         }
+        .environment(\ .locale, Locale(identifier: appLanguage == "system" ? Locale.current.identifier : appLanguage))
+        .onReceive(NotificationCenter.default.publisher(for: .appLanguageDidChange)) { _ in
+            reloadID = UUID()
+            onLanguageChange?()
+        }
     }
 
-    private func settingsRow<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+    private func settingsRow<Content: View>(title: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {
         HStack(alignment: .center) {
             Text(title)
                 .foregroundColor(Theme.Colors.textPrimary)
@@ -137,7 +160,7 @@ struct SettingsView: View {
                 Text(message)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.error)
-                Button(String(localized: "Retry")) {
+                Button("Retry") {
                     appController.startModelDownload()
                 }
                 .buttonStyle(.link)
@@ -152,3 +175,4 @@ struct SettingsView: View {
     SettingsView()
 }
 #endif
+

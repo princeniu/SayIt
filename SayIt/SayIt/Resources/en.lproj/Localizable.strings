@@ -49,3 +49,16 @@
 "Mic: %@" = "Mic: %@";
 "Error" = "Error";
 "Quit" = "Quit";
+"System Default" = "System Default";
+"Interface Language" = "Interface Language";
+"Apple Speech" = "Apple Speech";
+"Whisper" = "Whisper";
+"Settings" = "Settings";
+"Global Hotkey" = "Global Hotkey";
+"Crash reporting" = "Crash reporting";
+"Privacy Policy" = "Privacy Policy";
+"View Online" = "View Online";
+"Updates" = "Updates";
+"Check for Updates" = "Check for Updates";
+"Check…" = "Check…";
+"Copied" = "Copied";

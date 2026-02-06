@@ -13,7 +13,7 @@ import Testing
 }
 
 @Test func popoverView_hasLanguageOptions() async throws {
-    let ids = PopoverView.languageOptions.map(\.id)
+    let ids = PopoverView.languageOptionKeys.map(\.id)
     #expect(ids.contains("system"))
     #expect(ids.contains("zh-Hans"))
     #expect(ids.contains("en-US"))

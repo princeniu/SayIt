@@ -1,0 +1,67 @@
+/* 
+  Localizable.strings (zh-Hans)
+  SayIt
+*/
+
+/* Menu Bar / Popover */
+"Settings…" = "设置…";
+"Microphone" = "麦克风";
+"No input devices" = "无输入设备";
+"Engine" = "引擎";
+"Language" = "语言";
+"System (Recommended)" = "系统（推荐）";
+"Chinese (Simplified)" = "简体中文";
+"English" = "English";
+"Start Recording" = "开始录制";
+"Stop & Transcribe" = "停止并转写";
+"Transcribing…" = "转写中…";
+"Transcribing (Slow)…" = "转写中（较慢）…";
+"Ready to Record" = "准备录制";
+"Processing audio…" = "处理音频中…";
+"This is taking longer than usual…" = "比平时耗时更久…";
+"Recording…" = "录制中…";
+
+/* Status & Errors */
+"Microphone and speech permissions required" = "需要麦克风与语音权限";
+"Open System Settings" = "打开系统设置";
+"Opens macOS System Settings" = "打开 macOS 系统设置";
+"Input device disconnected. Switched to default." = "输入设备已断开，已切换为默认设备。";
+"Whisper model required" = "需要 Whisper 模型";
+"Download Model" = "下载模型";
+"Retry" = "重试";
+"Check permissions" = "检查权限";
+"Audio input unavailable" = "音频输入不可用";
+"Transcription failed" = "转写失败";
+
+/* Settings Window */
+"General" = "通用";
+"Global hotkey" = "全局快捷键";
+"Launch at login" = "登录时启动";
+"Whisper Model" = "Whisper 模型";
+"Change…" = "更改…";
+"Download" = "下载";
+"Ready" = "就绪";
+"Model: %@" = "模型：%@";
+"Press a new shortcut" = "按下新的快捷键";
+"Modifier required" = "需要修饰键";
+"Recorder not ready" = "录音未就绪";
+"Mic: %@" = "麦克风：%@";
+"Error" = "错误";
+"Quit" = "退出";
+"System Default" = "系统默认";
+"Interface Language" = "界面语言";
+"Download progress" = "下载进度";
+"SayIt v1.0.0" = "SayIt v1.0.0";
+"© 2026 Prince Niu" = "© 2026 Prince Niu";
+"Powered by" = "Powered by";
+"Apple Speech" = "苹果语音";
+"Whisper" = "Whisper";
+"Settings" = "设置";
+"Global Hotkey" = "全局快捷键";
+"Crash reporting" = "崩溃报告";
+"Privacy Policy" = "隐私政策";
+"View Online" = "在线查看";
+"Updates" = "更新";
+"Check for Updates" = "检查更新";
+"Check…" = "检查…";
+"Copied" = "已复制";

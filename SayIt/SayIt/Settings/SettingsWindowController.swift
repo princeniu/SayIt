@@ -1,6 +1,17 @@
 import AppKit
 import SwiftUI
 
+private struct OnAppLanguageChangeKey: EnvironmentKey {
+    static let defaultValue: (() -> Void)? = nil
+}
+
+extension EnvironmentValues {
+    var onAppLanguageChange: (() -> Void)? {
+        get { self[OnAppLanguageChangeKey.self] }
+        set { self[OnAppLanguageChangeKey.self] = newValue }
+    }
+}
+
 protocol SettingsWindowControlling {
     @MainActor func show(appController: AppController)
 }
@@ -10,6 +21,7 @@ final class SettingsWindowController: SettingsWindowControlling {
 
     @MainActor func show(appController: AppController) {
         if let window {
+            updateWindowTitle()
             window.makeKeyAndOrderFront(nil)
             return
         }
@@ -21,17 +33,27 @@ final class SettingsWindowController: SettingsWindowControlling {
             backing: .buffered,
             defer: false
         )
-        window.title = "Settings"
+        self.window = window
+        updateWindowTitle()
         window.isReleasedWhenClosed = false
         window.center()
         window.contentView = hosting.view
         window.makeKeyAndOrderFront(nil)
-        self.window = window
+    }
+
+    @MainActor private func updateWindowTitle() {
+        window?.title = AppLanguageManager.shared.localized("Settings")
     }
 
     @MainActor
     private func createHostingController(appController: AppController) -> NSHostingController<some View> {
-        let view = SettingsView().environmentObject(appController)
+        let lang = UserDefaults.standard.string(forKey: "appLanguage") ?? "system"
+        let localeID = (lang == "system") ? Locale.current.identifier : lang
+        let onLanguageChange: (() -> Void)? = { [weak self] in self?.updateWindowTitle() }
+        let view = SettingsView()
+            .environmentObject(appController)
+            .environment(\.locale, Locale(identifier: localeID))
+            .environment(\.onAppLanguageChange, onLanguageChange)
         return NSHostingController(rootView: view)
     }
 }
