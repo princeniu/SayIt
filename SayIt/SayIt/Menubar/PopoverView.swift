@@ -196,9 +196,15 @@ struct PopoverView: View {
 
     private var settingsButtonRow: some View {
         HStack {
-            Spacer()
             Button("Settings…") {
                 appController.send(.openSettingsWindow)
+            }
+            .buttonStyle(.link)
+            
+            Spacer()
+            
+            Button("Quit") {
+                appController.send(.terminate)
             }
             .buttonStyle(.link)
         }

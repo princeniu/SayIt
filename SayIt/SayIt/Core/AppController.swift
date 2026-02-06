@@ -232,6 +232,8 @@ final class AppController: ObservableObject {
             Task { @MainActor in
                 settingsWindowController.show(appController: self)
             }
+        case .terminate:
+            NSApplication.shared.terminate(nil)
         }
     }
 
