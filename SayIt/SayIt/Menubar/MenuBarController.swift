@@ -32,6 +32,7 @@ final class MenuBarController {
         let root = PopoverRootView()
             .environmentObject(appController)
         popover.contentViewController = NSHostingController(rootView: root)
+        popover.appearance = NSAppearance(named: .darkAqua)
     }
 
     private func bindState() {
@@ -74,6 +75,7 @@ final class MenuBarController {
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 let window = self.popover.contentViewController?.view.window
+                window?.appearance = NSAppearance(named: .darkAqua)
                 self.appController.setHUDAnchorWindow(window)
             }
         }

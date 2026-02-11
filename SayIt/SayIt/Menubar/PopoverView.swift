@@ -8,6 +8,18 @@ struct PopoverView: View {
     @StateObject private var viewModel = PopoverViewModel(state: AppState(), selectedMicName: "Unknown")
     @AppStorage("transcriptionLanguage") private var transcriptionLanguage = "system"
 
+    static var appVersionString: String {
+        let short = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        if let short, let build, !build.isEmpty {
+            return "v\(short) (\(build))"
+        }
+        if let short {
+            return "v\(short)"
+        }
+        return "v1.0"
+    }
+
     static let cardSpacing: CGFloat = 12
     static let contentWidth: CGFloat = 320
 
@@ -447,7 +459,7 @@ struct PopoverView: View {
     private var footerSection: some View {
         VStack(spacing: 4) {
             HStack {
-                Text("SayIt v1.0.0")
+                Text("SayIt \(Self.appVersionString)")
                 Spacer()
                 Text("© 2026 Prince Niu")
             }
@@ -491,3 +503,4 @@ private struct LevelMeterView: View {
         .environmentObject(AppController())
 }
 #endif
+

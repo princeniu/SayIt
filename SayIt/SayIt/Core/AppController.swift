@@ -114,14 +114,11 @@ final class AppController: ObservableObject {
         switch intent {
         case .startRecording:
             guard permissionManager.isAuthorized else {
-                if permissionManager.isFirstRun {
-                    permissionManager.requestPermissionsIfNeeded()
-                    state.mode = .error(.permissionDenied)
-                    state.phaseDetail = .needsPermissions
-                } else {
-                    state.mode = .error(.permissionDenied)
-                    state.phaseDetail = nil
-                }
+                // Always recheck and attempt to request when starting a recording
+                permissionManager.recheckAndRequestIfNeeded()
+                state.mode = .error(.permissionDenied)
+                // Show permissions needed message to guide users to System Settings
+                state.phaseDetail = .needsPermissions
                 return
             }
             do {

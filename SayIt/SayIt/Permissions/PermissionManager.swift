@@ -13,16 +13,11 @@ final class PermissionManager: ObservableObject {
     @Published private(set) var micStatus: Status
     @Published private(set) var speechStatus: Status
 
-    private let userDefaults: UserDefaults
-    private let requestKey = "didRequestPermissions"
-
     init(
         micStatus: Status = .unknown,
         speechStatus: Status = .unknown,
-        userDefaults: UserDefaults = .standard,
         useSystemStatus: Bool = true
     ) {
-        self.userDefaults = userDefaults
         self.micStatus = micStatus
         self.speechStatus = speechStatus
 
@@ -40,15 +35,23 @@ final class PermissionManager: ObservableObject {
         micStatus == .authorized && speechStatus == .authorized
     }
 
-    var isFirstRun: Bool {
-        !userDefaults.bool(forKey: requestKey)
+    func requestPermissionsIfNeeded() {
+        // Request only when the current status is not determined (unknown)
+        if micStatus == .unknown {
+            requestMicrophone()
+        }
+        if speechStatus == .unknown {
+            requestSpeech()
+        }
     }
 
-    func requestPermissionsIfNeeded() {
-        guard !userDefaults.bool(forKey: requestKey) else { return }
-        userDefaults.set(true, forKey: requestKey)
-        requestMicrophone()
-        requestSpeech()
+    /// Refresh system-reported statuses and request if still undetermined.
+    func recheckAndRequestIfNeeded() {
+        // Refresh cached statuses from the system first
+        micStatus = Self.mapMicStatus(AVCaptureDevice.authorizationStatus(for: .audio))
+        speechStatus = Self.mapSpeechStatus(SFSpeechRecognizer.authorizationStatus())
+        // Then try to request if undetermined
+        requestPermissionsIfNeeded()
     }
 
     func openSystemSettings() {

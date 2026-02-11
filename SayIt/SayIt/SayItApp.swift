@@ -17,6 +17,7 @@ struct SayItApp: App {
         Settings {
             EmptyView()
                 .environment(\.locale, Locale(identifier: appLanguage == "system" ? Locale.current.identifier : appLanguage))
+                .preferredColorScheme(.dark)
         }
     }
 }
@@ -26,6 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.appearance = NSAppearance(named: .darkAqua)
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
             || NSClassFromString("XCTestCase") != nil {
             return
