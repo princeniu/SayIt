@@ -9,7 +9,7 @@ PROJECT_NAME="SayIt"
 SCHEME_NAME="SayIt"
 BUILD_DIR="./build"
 RELEASE_DIR="${BUILD_DIR}/Release"
-DMG_NAME="${PROJECT_NAME}_v1.0.2.dmg"
+DMG_NAME="${PROJECT_NAME}_v1.0.3.dmg"
 
 echo "🚀 Starting productization build..."
 
