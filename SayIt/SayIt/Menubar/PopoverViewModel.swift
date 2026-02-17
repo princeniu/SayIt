@@ -10,24 +10,26 @@ final class PopoverViewModel: ObservableObject {
     var primaryStatusText: String {
         switch state.mode {
         case .idle:
-            return NSLocalizedString("Ready to Record", comment: "Status: Ready")
+            return AppLanguageManager.shared.localized("Ready to Record")
         case .recording:
-            return NSLocalizedString("Recording…", comment: "Status: Recording")
+            return AppLanguageManager.shared.localized("Recording…")
         case .transcribing:
-            return NSLocalizedString("Transcribing…", comment: "Status: Transcribing")
+            return AppLanguageManager.shared.localized("Transcribing…")
         case .error:
-            return NSLocalizedString("Error", comment: "Status: Error")
+            return AppLanguageManager.shared.localized("Error")
         }
     }
     
     var secondaryStatusText: String? {
         switch state.mode {
         case .idle:
-            return String(format: NSLocalizedString("Mic: %@", comment: "Microphone name"), selectedMicName)
+            return String(format: AppLanguageManager.shared.localized("Mic: %@"), selectedMicName)
         case .recording:
             return nil
         case .transcribing(let isSlow):
-            return isSlow ? NSLocalizedString("This is taking longer than usual…", comment: "Slow transcription") : NSLocalizedString("Processing audio…", comment: "Processing")
+            return isSlow
+                ? AppLanguageManager.shared.localized("This is taking longer than usual…")
+                : AppLanguageManager.shared.localized("Processing audio…")
         case .error(let error):
             return error.localizedDescription
         }
@@ -50,9 +52,9 @@ final class PopoverViewModel: ObservableObject {
 extension AppError {
     var localizedDescription: String {
         switch self {
-        case .permissionDenied: return NSLocalizedString("Check permissions", comment: "Error: Permissions")
-        case .captureFailed: return NSLocalizedString("Audio input unavailable", comment: "Error: Capture")
-        case .transcriptionFailed: return NSLocalizedString("Transcription failed", comment: "Error: Transcription")
+        case .permissionDenied: return AppLanguageManager.shared.localized("Check permissions")
+        case .captureFailed: return AppLanguageManager.shared.localized("Audio input unavailable")
+        case .transcriptionFailed: return AppLanguageManager.shared.localized("Transcription failed")
         }
     }
 }
