@@ -96,3 +96,14 @@ import Testing
     #expect(PopoverView.shouldShowResultCard(text: "hello", mode: .idle) == true)
     #expect(PopoverView.shouldShowResultCard(text: "hello", mode: .transcribing(isSlow: false)) == true)
 }
+
+@Test func popoverView_resultTextArea_hasMinAndMaxHeight() async throws {
+    #expect(PopoverView.resultTextMinHeight > 0)
+    #expect(PopoverView.resultTextMaxHeight >= PopoverView.resultTextMinHeight)
+}
+
+@Test func popoverView_shouldUseScrollableResult_whenLongOrMultiline() async throws {
+    #expect(PopoverView.shouldUseScrollableResult("short text") == false)
+    #expect(PopoverView.shouldUseScrollableResult(String(repeating: "a", count: PopoverView.resultInlineCharacterThreshold + 1)) == true)
+    #expect(PopoverView.shouldUseScrollableResult("line1\nline2\nline3") == true)
+}

@@ -22,6 +22,10 @@ struct PopoverView: View {
 
     static let cardSpacing: CGFloat = 12
     static let contentWidth: CGFloat = 320
+    static let resultTextMinHeight: CGFloat = 62
+    static let resultTextMaxHeight: CGFloat = 110
+    static let resultInlineCharacterThreshold: Int = 72
+    static let resultInlineMaxLines: Int = 3
 
     enum Section: Hashable {
         case settings
@@ -97,6 +101,14 @@ struct PopoverView: View {
         case .idle, .recording, .transcribing, .error:
             return hasText
         }
+    }
+
+    static func shouldUseScrollableResult(_ text: String) -> Bool {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.count > resultInlineCharacterThreshold {
+            return true
+        }
+        return trimmed.filter { $0 == "\n" }.count >= 2
     }
 
     static func primaryButtonStyle(for mode: AppMode) -> PrimaryButtonStyle {
@@ -419,18 +431,99 @@ struct PopoverView: View {
     }
 
     private func resultSection(text: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Latest Transcription")
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.textSecondary)
-            ScrollView {
-                Text(text)
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.textPrimary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textSelection(.enabled)
+        let shouldScroll = Self.shouldUseScrollableResult(text)
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "waveform.and.magnifyingglass")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Theme.Colors.accent.opacity(0.95))
+                    .frame(width: 20, height: 20)
+                    .background(
+                        Circle()
+                            .fill(Theme.Colors.accent.opacity(0.16))
+                    )
+                Text(languageManager.localized("Latest Transcription"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.Colors.textSecondary.opacity(0.95))
+                Spacer()
             }
-            .frame(maxWidth: .infinity, maxHeight: 110, alignment: .topLeading)
+
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: Theme.Radius.input)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Theme.Colors.surface1.opacity(0.78),
+                                Theme.Colors.base.opacity(0.70)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Theme.Colors.accent.opacity(0.95),
+                                Theme.Colors.accent.opacity(0.32)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: 3)
+                    .padding(.vertical, 8)
+                    .padding(.leading, 8)
+
+                Group {
+                    if shouldScroll {
+                        ScrollView {
+                            Text(text)
+                                .font(.callout)
+                                .lineSpacing(2)
+                                .foregroundStyle(Theme.Colors.textPrimary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .textSelection(.enabled)
+                        }
+                        .scrollIndicators(.hidden)
+                        .frame(
+                            maxWidth: .infinity,
+                            minHeight: Self.resultTextMinHeight,
+                            maxHeight: Self.resultTextMaxHeight,
+                            alignment: .topLeading
+                        )
+                    } else {
+                        Text(text)
+                            .font(.callout)
+                            .lineSpacing(2)
+                            .foregroundStyle(Theme.Colors.textPrimary)
+                            .lineLimit(Self.resultInlineMaxLines)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .textSelection(.enabled)
+                    }
+                }
+                .padding(.leading, 18)
+                .padding(.trailing, 10)
+                .padding(.vertical, 10)
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.input)
+                    .stroke(Theme.Colors.border.opacity(0.9), lineWidth: 1)
+            )
+            .overlay(alignment: .bottom) {
+                if shouldScroll {
+                    LinearGradient(
+                        colors: [Color.clear, Theme.Colors.base.opacity(0.42)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 14)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.input))
+                    .allowsHitTesting(false)
+                }
+            }
         }
     }
 
