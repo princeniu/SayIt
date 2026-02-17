@@ -20,6 +20,7 @@
 "Processing audio…" = "处理音频中…";
 "This is taking longer than usual…" = "比平时耗时更久…";
 "Recording…" = "录制中…";
+"Latest Transcription" = "最近一次转录结果";
 
 /* Status & Errors */
 "Microphone and speech permissions required" = "需要麦克风与语音权限";

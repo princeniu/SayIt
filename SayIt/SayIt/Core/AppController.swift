@@ -190,6 +190,7 @@ final class AppController: ObservableObject {
                         _ = self.clipboardManager.write(text)
                         self.playSound(NSSound.Name("Glass"))
                         self.hudManager.showCopied()
+                        self.state.latestTranscription = text
                         self.state.mode = .idle
                         self.state.phaseDetail = .copied
                         self.state.transcribingStartedAt = nil

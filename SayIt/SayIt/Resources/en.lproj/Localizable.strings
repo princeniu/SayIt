@@ -22,6 +22,7 @@
 "Processing audio…" = "Processing audio…";
 "This is taking longer than usual…" = "This is taking longer than usual…";
 "Recording…" = "Recording…";
+"Latest Transcription" = "Latest Transcription";
 
 /* Status & Errors */
 "Microphone and speech permissions required" = "Microphone and speech permissions required";

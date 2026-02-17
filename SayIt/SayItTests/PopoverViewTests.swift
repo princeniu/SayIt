@@ -41,10 +41,10 @@ import Testing
 
 
 @Test func popoverView_sectionOrder_alwaysIncludesStatus() async throws {
-    #expect(PopoverView.sectionOrderLayout(for: .idle) == [PopoverView.Section.settings, .actions, .status])
-    #expect(PopoverView.sectionOrderLayout(for: .recording) == [PopoverView.Section.settings, .actions, .status])
-    #expect(PopoverView.sectionOrderLayout(for: .transcribing(isSlow: false)) == [PopoverView.Section.settings, .actions, .status])
-    #expect(PopoverView.sectionOrderLayout(for: .error(.captureFailed)) == [PopoverView.Section.settings, .actions, .status])
+    #expect(PopoverView.sectionOrderLayout(for: .idle) == [PopoverView.Section.settings, .actions, .status, .result])
+    #expect(PopoverView.sectionOrderLayout(for: .recording) == [PopoverView.Section.settings, .actions, .status, .result])
+    #expect(PopoverView.sectionOrderLayout(for: .transcribing(isSlow: false)) == [PopoverView.Section.settings, .actions, .status, .result])
+    #expect(PopoverView.sectionOrderLayout(for: .error(.captureFailed)) == [PopoverView.Section.settings, .actions, .status, .result])
 }
 
 @Test func popoverView_settingsSectionOrder_placesSettingsButtonFirst() async throws {
@@ -89,3 +89,10 @@ import Testing
     #expect(PopoverView.shouldBlur(for: nil) == false)
 }
 
+@Test func popoverView_shouldShowResultCard_onlyWhenTextExists() async throws {
+    #expect(PopoverView.shouldShowResultCard(text: nil, mode: .idle) == false)
+    #expect(PopoverView.shouldShowResultCard(text: "", mode: .idle) == false)
+    #expect(PopoverView.shouldShowResultCard(text: "   ", mode: .recording) == false)
+    #expect(PopoverView.shouldShowResultCard(text: "hello", mode: .idle) == true)
+    #expect(PopoverView.shouldShowResultCard(text: "hello", mode: .transcribing(isSlow: false)) == true)
+}

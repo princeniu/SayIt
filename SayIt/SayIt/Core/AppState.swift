@@ -30,6 +30,7 @@ public struct AppState: Equatable {
     public var transcribingStartedAt: Date? = nil
     public var audioLevel: Double = 0
     public var modelStatus: ModelStatus = .idle
+    public var latestTranscription: String? = nil
 
     func statusDetail(selectedMic: String) -> String {
         switch mode {

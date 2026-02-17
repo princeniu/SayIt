@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import CoreAudio
 import Foundation
 import Testing
@@ -95,6 +96,7 @@ import Testing
     #expect(audioCaptureEngine.stopCalled == true)
     #expect(controller.state.mode == AppMode.idle)
     #expect(NSPasteboard.general.string(forType: .string) == "hello")
+    #expect(controller.state.latestTranscription == "hello")
 }
 
 @Test func stopAndTranscribe_setsTranscribingStart() async throws {
@@ -159,8 +161,62 @@ import Testing
     }
 
     #expect(controller.state.phaseDetail == .copied)
+    #expect(controller.state.latestTranscription == "hello")
     try await Task.sleep(nanoseconds: 200_000_000)
     #expect(controller.state.phaseDetail == nil)
+    #expect(controller.state.latestTranscription == "hello")
+}
+
+@Test func transcriptionFailure_keepsPreviousLatestTranscription() async throws {
+    let suiteName = "AppControllerTests.transcriptionFailure_keepsPreviousLatestTranscription"
+    let suite = UserDefaults(suiteName: suiteName) ?? .standard
+    suite.removePersistentDomain(forName: suiteName)
+    let audioCaptureEngine = TestAudioCaptureEngine()
+    let transcriptionEngine = SequenceTranscriptionEngine(
+        responses: [
+            .success("first result"),
+            .failure(SequenceTranscriptionError.forcedFailure)
+        ]
+    )
+    let permissionManager = PermissionManager(
+        micStatus: .authorized,
+        speechStatus: .authorized,
+        userDefaults: suite,
+        useSystemStatus: false
+    )
+    let controller = AppController(
+        permissionManager: permissionManager,
+        audioDeviceManager: AudioDeviceManager(startMonitoring: false),
+        audioCaptureEngine: audioCaptureEngine,
+        transcriptionEngine: transcriptionEngine,
+        settingsUserDefaults: suite,
+        autoRequestPermissions: false
+    )
+
+    controller.send(.startRecording)
+    controller.send(.stopAndTranscribe)
+
+    for _ in 0..<50 {
+        if controller.state.mode == .idle {
+            break
+        }
+        try await Task.sleep(nanoseconds: 20_000_000)
+    }
+
+    #expect(controller.state.latestTranscription == "first result")
+
+    controller.send(.startRecording)
+    controller.send(.stopAndTranscribe)
+
+    for _ in 0..<50 {
+        if controller.state.mode == .error(.transcriptionFailed) {
+            break
+        }
+        try await Task.sleep(nanoseconds: 20_000_000)
+    }
+
+    #expect(controller.state.mode == .error(.transcriptionFailed))
+    #expect(controller.state.latestTranscription == "first result")
 }
 
 @Test func startRecording_usesSelectedDevice() async throws {
@@ -419,5 +475,30 @@ final class TestHotkeyManager: HotkeyManaging {
 
     func simulateToggle() {
         handler?()
+    }
+}
+
+private enum SequenceTranscriptionError: Error {
+    case forcedFailure
+}
+
+private final class SequenceTranscriptionEngine: TranscriptionEngine {
+    private var responses: [Result<String, Error>]
+
+    init(responses: [Result<String, Error>]) {
+        self.responses = responses
+    }
+
+    func transcribe(buffer: AVAudioPCMBuffer, locale: Locale) async throws -> String {
+        guard !responses.isEmpty else {
+            return ""
+        }
+        let next = responses.removeFirst()
+        switch next {
+        case .success(let text):
+            return text
+        case .failure(let error):
+            throw error
+        }
     }
 }

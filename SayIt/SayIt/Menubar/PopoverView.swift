@@ -27,6 +27,7 @@ struct PopoverView: View {
         case settings
         case actions
         case status
+        case result
     }
 
     enum SettingsRow: Hashable {
@@ -75,7 +76,7 @@ struct PopoverView: View {
     }
 
     static func sectionOrderLayout(for mode: AppMode) -> [Section] {
-        return [.settings, .actions, .status]
+        return [.settings, .actions, .status, .result]
     }
 
     static func settingsSectionOrderLayout() -> [SettingsRow] {
@@ -88,6 +89,14 @@ struct PopoverView: View {
 
     static func shouldBlur(for phaseDetail: PhaseDetail?) -> Bool {
         phaseDetail == .copied
+    }
+
+    static func shouldShowResultCard(text: String?, mode: AppMode) -> Bool {
+        let hasText = !(text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        switch mode {
+        case .idle, .recording, .transcribing, .error:
+            return hasText
+        }
     }
 
     static func primaryButtonStyle(for mode: AppMode) -> PrimaryButtonStyle {
@@ -154,6 +163,13 @@ struct PopoverView: View {
 
                     if shouldShowStatus {
                         statusSection(showDownloadPrompt: showDownloadPrompt)
+                            .popoverCard()
+                    }
+                case .result:
+                    if Self.shouldShowResultCard(text: appController.state.latestTranscription, mode: appController.state.mode),
+                       let transcription = appController.state.latestTranscription?.trimmingCharacters(in: .whitespacesAndNewlines),
+                       !transcription.isEmpty {
+                        resultSection(text: transcription)
                             .popoverCard()
                     }
                 }
@@ -402,6 +418,22 @@ struct PopoverView: View {
         }
     }
 
+    private func resultSection(text: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Latest Transcription")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.textSecondary)
+            ScrollView {
+                Text(text)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.textPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .textSelection(.enabled)
+            }
+            .frame(maxWidth: .infinity, maxHeight: 110, alignment: .topLeading)
+        }
+    }
+
     private func secondaryStatusText(at date: Date) -> String? {
         switch appController.state.mode {
         case .recording:
@@ -503,4 +535,3 @@ private struct LevelMeterView: View {
         .environmentObject(AppController())
 }
 #endif
-
