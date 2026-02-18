@@ -4,3 +4,9 @@
 **/xcuserdata/
 .worktrees/
 SayIt/build/
+# Sensitive signing/notarization keys
+*.p8
+AuthKey*.p8
+App Store Connect Auth Key.p8
+# Release artifacts (upload to GitHub Releases instead of git history)
+SayIt/SayIt_v*.dmg

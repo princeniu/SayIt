@@ -10,14 +10,10 @@ struct PopoverView: View {
 
     static var appVersionString: String {
         let short = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-        if let short, let build, !build.isEmpty {
-            return "v\(short) (\(build))"
-        }
-        if let short {
+        if let short, !short.isEmpty {
             return "v\(short)"
         }
-        return "v1.0"
+        return "v1.0.4"
     }
 
     static let cardSpacing: CGFloat = 12
