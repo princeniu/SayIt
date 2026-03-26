@@ -19,14 +19,21 @@ final class AudioDeviceManager: ObservableObject {
     let events = PassthroughSubject<AudioDeviceEvent, Never>()
 
     private var observers: [NSObjectProtocol] = []
+    private let deviceEnumerator: () -> [AudioInputDevice]
+    private var preferredDeviceID: AudioDeviceID?
 
     init(
         devices: [AudioInputDevice] = [],
         selectedDeviceID: AudioDeviceID? = nil,
+        deviceEnumerator: @escaping () -> [AudioInputDevice] = {
+            AudioDeviceManager.enumerateInputDevices()
+        },
         startMonitoring: Bool = true
     ) {
         self.devices = devices
         self.selectedDeviceID = selectedDeviceID
+        self.deviceEnumerator = deviceEnumerator
+        self.preferredDeviceID = selectedDeviceID
         if startMonitoring {
             refreshDevices()
             observeDeviceChanges()
@@ -40,12 +47,13 @@ final class AudioDeviceManager: ObservableObject {
     func selectDevice(id: AudioDeviceID) {
         guard devices.contains(where: { $0.id == id }) else { return }
         let previous = selectedDeviceID
+        preferredDeviceID = id
         selectedDeviceID = id
         events.send(.deviceSwitched(from: previous, to: id))
     }
 
     func refreshDevices() {
-        let newDevices = Self.enumerateInputDevices()
+        let newDevices = deviceEnumerator()
         devices = newDevices
         handleSelectionAfterRefresh()
     }
@@ -70,6 +78,15 @@ final class AudioDeviceManager: ObservableObject {
     }
 
     private func handleSelectionAfterRefresh() {
+        if let preferred = preferredDeviceID,
+           devices.contains(where: { $0.id == preferred }) {
+            guard selectedDeviceID != preferred else { return }
+            let previous = selectedDeviceID
+            selectedDeviceID = preferred
+            events.send(.deviceSwitched(from: previous, to: preferred))
+            return
+        }
+
         if let current = selectedDeviceID,
            devices.contains(where: { $0.id == current }) {
             return

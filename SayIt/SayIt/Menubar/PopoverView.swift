@@ -13,7 +13,7 @@ struct PopoverView: View {
         if let short, !short.isEmpty {
             return "v\(short)"
         }
-        return "v1.0.4"
+        return "v1.0.5"
     }
 
     static let cardSpacing: CGFloat = 12
