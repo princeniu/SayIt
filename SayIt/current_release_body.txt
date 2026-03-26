@@ -14,4 +14,4 @@
 ## Notes
 
 - This DMG is Developer ID signed.
-- Notarization was skipped in the current environment because App Store Connect notarization credentials were not available.
+- The app and DMG are notarized and stapled.
