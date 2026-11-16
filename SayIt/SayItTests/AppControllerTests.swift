@@ -12,7 +12,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -38,7 +37,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -69,7 +67,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -107,7 +104,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -137,7 +133,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -181,7 +176,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -226,7 +220,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
         useSystemStatus: false
     )
     let deviceID: AudioDeviceID = 123
@@ -261,7 +254,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -294,7 +286,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -327,7 +318,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -352,7 +342,7 @@ import Testing
     let hotkeyManager = TestHotkeyManager()
 
     _ = AppController(
-        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, userDefaults: suite ?? .standard, useSystemStatus: false),
+        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, useSystemStatus: false),
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: TestAudioCaptureEngine(),
         transcriptionEngine: TestTranscriptionEngine(),
@@ -370,7 +360,7 @@ import Testing
     let hotkeyManager = TestHotkeyManager()
 
     _ = AppController(
-        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, userDefaults: suite ?? .standard, useSystemStatus: false),
+        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, useSystemStatus: false),
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: TestAudioCaptureEngine(),
         transcriptionEngine: TestTranscriptionEngine(),
@@ -397,7 +387,6 @@ import Testing
     let permissionManager = PermissionManager(
         micStatus: .authorized,
         speechStatus: .authorized,
-        userDefaults: suite ?? .standard,
         useSystemStatus: false
     )
     let controller = AppController(
@@ -424,7 +413,7 @@ import Testing
     let transcriptionEngine = TestTranscriptionEngine(delay: 5.0, result: "hello")
     
     let controller = AppController(
-        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, userDefaults: suite, useSystemStatus: false),
+        permissionManager: PermissionManager(micStatus: .authorized, speechStatus: .authorized, useSystemStatus: false),
         audioDeviceManager: AudioDeviceManager(startMonitoring: false),
         audioCaptureEngine: TestAudioCaptureEngine(),
         transcriptionEngine: transcriptionEngine,

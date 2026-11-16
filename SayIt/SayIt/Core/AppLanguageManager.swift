@@ -60,13 +60,3 @@ struct PopoverRootView: View {
             .environment(\.locale, languageManager.currentLocale)
     }
 }
-
-/// 用于 SwiftUI 的动态本地化文本组件
-struct LocalizedText: View {
-    @ObservedObject private var languageManager = AppLanguageManager.shared
-    let key: String
-    var body: some View {
-        Text(languageManager.localized(key))
-    }
-}
-

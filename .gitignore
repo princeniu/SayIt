@@ -10,3 +10,29 @@ AuthKey*.p8
 App Store Connect Auth Key.p8
 # Release artifacts (upload to GitHub Releases instead of git history)
 SayIt/SayIt_v*.dmg
+
+# Private local state and generated artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.mobileprovision
+*.provisionprofile
+*.sqlite*
+*.db
+*.db-*
+*.log
+.venv/
+venv/
+node_modules/
+SayIt/build*/
+*.dmg
+/IMG_*.jpg
+/截屏*.png
+/build_error.txt

@@ -9,7 +9,6 @@ final class FlowTests: XCTestCase {
         let permissionManager = PermissionManager(
             micStatus: .authorized,
             speechStatus: .authorized,
-            userDefaults: suite ?? .standard,
             useSystemStatus: false
         )
         let controller = AppController(
@@ -19,9 +18,9 @@ final class FlowTests: XCTestCase {
             transcriptionEngine: TestTranscriptionEngine(),
             autoRequestPermissions: false
         )
-        controller.send(.startRecording)
+        controller.send(AppIntent.startRecording)
         if case .recording = controller.state.mode { } else { XCTFail("Expected recording") }
-        controller.send(.stopAndTranscribe)
+        controller.send(AppIntent.stopAndTranscribe)
 
         if case .transcribing = controller.state.mode {
             return
