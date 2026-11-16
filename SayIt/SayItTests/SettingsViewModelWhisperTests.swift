@@ -22,7 +22,7 @@ struct SettingsViewModelWhisperTests {
             #expect(Bool(false), "Expected idle status by default")
         }
         
-        // This test fails because modelStatus doesn't exist yet
+        // Checks the initial idle state through the modelStatus property.
         // and we haven't implemented the mechanism to inject/update it
     }
 }

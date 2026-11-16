@@ -26,11 +26,6 @@ protocol PopoverOutsideClickMonitoring: AnyObject {
     func stop()
 }
 
-final class NoopPopoverOutsideClickMonitor: PopoverOutsideClickMonitoring {
-    func start() {}
-    func stop() {}
-}
-
 final class PopoverOutsideClickMonitor: PopoverOutsideClickMonitoring {
     private let resolveTarget: (NSEvent) -> PopoverClickTarget
     private let handler: (PopoverClickTarget) -> Void

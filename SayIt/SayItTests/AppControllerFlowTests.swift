@@ -12,7 +12,6 @@ final class AppControllerFlowTests: XCTestCase {
         let permissionManager = PermissionManager(
             micStatus: .authorized,
             speechStatus: .authorized,
-            userDefaults: suite ?? .standard,
             useSystemStatus: false
         )
         let controller = AppController(
@@ -37,7 +36,6 @@ final class AppControllerFlowTests: XCTestCase {
         let permissionManager = PermissionManager(
             micStatus: .authorized,
             speechStatus: .authorized,
-            userDefaults: suite ?? .standard,
             useSystemStatus: false
         )
         let deviceID: AudioDeviceID = 123
@@ -67,7 +65,6 @@ final class AppControllerFlowTests: XCTestCase {
         let permissionManager = PermissionManager(
             micStatus: .unknown,
             speechStatus: .unknown,
-            userDefaults: suite ?? .standard,
             useSystemStatus: false
         )
         let controller = AppController(
@@ -94,7 +91,6 @@ final class AppControllerFlowTests: XCTestCase {
         let permissionManager = PermissionManager(
             micStatus: .authorized,
             speechStatus: .authorized,
-            userDefaults: suite ?? .standard,
             useSystemStatus: false
         )
         let controller = AppController(
